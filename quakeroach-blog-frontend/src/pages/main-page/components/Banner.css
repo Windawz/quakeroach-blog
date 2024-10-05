@@ -1,0 +1,21 @@
+.banner {
+  border: 1px solid #444444;
+  color: #e2a129;
+  background-color: #292929;
+  padding: 8px 5px 8px 5px;
+  width: 18rem;
+  height: 3rem;
+  float: left;
+  position: relative;
+}
+
+.banner-text {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.6rem;
+  font-variant: small-caps;
+  user-select: none;
+  text-wrap: nowrap;
+}

@@ -5,5 +5,8 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   background-size: 12rem;
-  color: #e2a129;
+
+  padding: 1rem 1rem;
+
+  font-family: monospace;
 }
