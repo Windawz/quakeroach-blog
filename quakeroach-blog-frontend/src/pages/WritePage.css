@@ -1,0 +1,11 @@
+.writing-area > .box {
+  display: flex;
+  justify-content: center;
+}
+
+.writing-area textarea {
+  min-width: 100%;
+  min-height: 80vh;
+  text-align: left;
+  vertical-align: top;
+}

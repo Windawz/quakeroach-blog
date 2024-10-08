@@ -1,3 +1,5 @@
+import './Belt.css';
+
 interface IBeltProps {
   children?: any;
   direction: "horizontal" | "vertical";

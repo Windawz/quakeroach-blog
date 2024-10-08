@@ -1,16 +1,19 @@
+import './Button.css';
 import Box from "./Box";
 
 interface IButtonProps {
-  text?: string;
-  onClick?: () => void;
+  url: string;
+  children?: any;
 }
 
-export default function Button({ text, onClick } : IButtonProps) {
+export default function Button({ url, children } : IButtonProps) {
   return (
-    <div className="button" onClick={onClick}>
-      <Box>
-        {text}
-      </Box>
+    <div className="button">
+      <a href={url}>
+        <Box>
+          {children}
+        </Box>
+      </a>
     </div>
   );
 }

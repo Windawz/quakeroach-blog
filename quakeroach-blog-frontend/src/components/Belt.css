@@ -1,0 +1,13 @@
+.belt {
+    display: flex;
+    position: relative;
+    justify-content: stretch;
+}
+
+.belt-horizontal {
+    flex-direction: row;
+}
+
+.belt-vertical {
+    flex-direction: column;
+}

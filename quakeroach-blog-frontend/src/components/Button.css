@@ -1,0 +1,9 @@
+.button > * {
+    display: inline-block;
+}
+
+.button a {
+    display: inline-block;
+    color: var(--main-text-color);
+    text-decoration-line: none;
+}

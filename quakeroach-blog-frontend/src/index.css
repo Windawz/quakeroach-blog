@@ -18,31 +18,35 @@ body {
   margin: 4px;
 }
 
-.box {
-  background-color: #5e5e5e89;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #444444;
-  padding: 8px;
-  margin: 4px;
-  position: relative;
+input[type="text"], textarea {
+  background-color: #00000049;
+  border-style: none;
+  color: #a7a7a7;
 }
 
-.link-button > a {
-  color: var(--main-text-color);
-  text-decoration-line: none;
+input[type="text"]:focus-visible, textarea:focus-visible {
+  outline: none;
 }
 
-.belt {
-  display: flex;
-  position: relative;
-  justify-content: stretch;
+input[type="text"]::selection, textarea::selection {
+  background-color: var(--main-text-color);
+  color: black;
 }
 
-.belt-horizontal {
-  flex-direction: row;
+.top-nav-bar {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  align-items: end;
 }
 
-.belt-vertical {
-  flex-direction: column;
+.top-nav-bar .button {
+  font-weight: bold;
+}
+
+.top-nav-bar > .button:first-child {
+  font-size: 20px;
+}
+
+.top-nav-bar > .belt:nth-child(2) {
+  justify-content: flex-end;
 }

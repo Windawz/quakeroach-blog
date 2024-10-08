@@ -4,6 +4,10 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import MainPage from './pages/MainPage';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Button from './components/Button';
+import Belt from './components/Belt';
+import LoginPage from './pages/LoginPage';
+import WritePage from './pages/WritePage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,13 +16,31 @@ const root = ReactDOM.createRoot(
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainPage />
-  }
+    element: <MainPage />,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: '/write',
+    element: <WritePage />,
+  },
 ]);
 
 root.render(
   <React.StrictMode>
+    
+    <div className="top-nav-bar">
+      <Button url="/">Home</Button>
+      <Belt direction="horizontal">
+        <Button url="/write">Write</Button>
+        <Button url="/login">Log In</Button>
+      </Belt>
+    </div>
+
     <RouterProvider router={router} />
+
   </React.StrictMode>
 );
 
