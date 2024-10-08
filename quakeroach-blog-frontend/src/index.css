@@ -1,3 +1,7 @@
+:root {
+  --main-text-color: #e2a129;
+}
+
 body {
   background-color: #000000;
   background-image: url("https://quakeroach.net/image/bg_qr.png");
@@ -6,7 +10,39 @@ body {
   background-position: center;
   background-size: 12rem;
 
-  padding: 1rem 1rem;
-
   font-family: monospace;
+
+  font-size: 14px;
+  color: var(--main-text-color);
+
+  margin: 4px;
+}
+
+.box {
+  background-color: #5e5e5e89;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #444444;
+  padding: 8px;
+  margin: 4px;
+  position: relative;
+}
+
+.link-button > a {
+  color: var(--main-text-color);
+  text-decoration-line: none;
+}
+
+.belt {
+  display: flex;
+  position: relative;
+  justify-content: stretch;
+}
+
+.belt-horizontal {
+  flex-direction: row;
+}
+
+.belt-vertical {
+  flex-direction: column;
 }

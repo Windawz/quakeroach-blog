@@ -1,0 +1,13 @@
+.top {
+  display: flex;
+  position: relative;
+}
+
+.top > .link-button {
+  display: flex;
+  width: 50%;
+}
+
+.top .button {
+  font-weight: bold;
+}
