@@ -4,17 +4,13 @@ using Quakeroach.Blog.Backend.Api.Storage;
 
 namespace Quakeroach.Blog.Backend.Api.Services.Repositories;
 
-public interface IBlogPostRepository
+public interface IBlogPostRepository : IRepositoryBase<BlogPost>
 {
     Task<List<BlogPost>> GetAsync(
-        int count,
-        long? authorId = null,
+        int maxCount,
+        string? authorName = null,
         DateTime? minPublishDate = null,
         DateTime? maxPublishDate = null);
-
-    Task<long> AddAsync(BlogPost blogPost);
-
-    Task RemoveAsync(long blogPostId);
 }
 
 public class BlogPostRepository : RepositoryBase<BlogPost>, IBlogPostRepository
@@ -22,16 +18,16 @@ public class BlogPostRepository : RepositoryBase<BlogPost>, IBlogPostRepository
     public BlogPostRepository(MainDbContext dbContext) : base(dbContext) { }
 
     public async Task<List<BlogPost>> GetAsync(
-        int count,
-        long? authorId = null,
+        int maxCount,
+        string? authorName = null,
         DateTime? minPublishDate = null,
         DateTime? maxPublishDate = null)
     {
         IQueryable<BlogPost> query = DbContext.BlogPosts;
 
-        if (authorId is not null)
+        if (authorName is not null)
         {
-            query = query.Where(x => x.Author.Id == authorId.Value);
+            query = query.Where(x => x.Author.Name == authorName);
         }
 
         if (minPublishDate is not null)
@@ -45,7 +41,7 @@ public class BlogPostRepository : RepositoryBase<BlogPost>, IBlogPostRepository
         }
 
         query = query.OrderByDescending(x => x.PublishDate)
-            .Take(count);
+            .Take(maxCount);
         
         return await query.ToListAsync();
     }

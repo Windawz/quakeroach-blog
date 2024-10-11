@@ -4,7 +4,14 @@ using Quakeroach.Blog.Backend.Api.Storage;
 
 namespace Quakeroach.Blog.Backend.Api.Services.Repositories;
 
-public abstract class RepositoryBase<TEntity> where TEntity : Entity
+public interface IRepositoryBase<TEntity> where TEntity : Entity
+{
+    Task<long> AddAsync(TEntity entity);
+
+    Task RemoveAsync(long id);
+}
+
+public abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where TEntity : Entity
 {
     protected RepositoryBase(MainDbContext dbContext)
     {
