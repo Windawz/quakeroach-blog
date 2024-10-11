@@ -16,6 +16,8 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        builder.Services.AddTransient<BusinessExceptionHandlerMiddleware>();
+
         builder.Services.AddDbContext<MainDbContext>(o =>
         {
             o.UseSqlite(builder.Configuration.GetConnectionString("Default"));
