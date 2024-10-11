@@ -1,11 +1,10 @@
-using Quakeroach.Blog.Backend.Api.Services.Logic;
 using Quakeroach.Blog.Backend.Api.Services.Repositories;
 
 namespace Quakeroach.Blog.Backend.Api.Services.TopLevel;
 
 public interface IBlogPostsService
 {
-    Task<List<ShortBlogPostOutput>> GetManyAsync(
+    Task<List<BlogPostOutput>> GetManyAsync(
         int maxCount,
         DateTime minPublishDate,
         string? authorName = null);
@@ -14,7 +13,7 @@ public interface IBlogPostsService
 public class NonPositiveMaxCountException(int maxCount)
     : ValidationException($"Provided max count ({maxCount}) must be positive");
 
-public record ShortBlogPostOutput(
+public record BlogPostOutput(
     string AuthorName,
     string Title,
     DateTime PublishDate,
@@ -23,17 +22,13 @@ public record ShortBlogPostOutput(
 public class BlogPostsService : IBlogPostsService
 {
     private readonly IBlogPostRepository _blogPostRepository;
-    private readonly IContentFormatter _contentFormatter;
 
-    public BlogPostsService(
-        IBlogPostRepository blogPostRepository,
-        IContentFormatter contentFormatter)
+    public BlogPostsService(IBlogPostRepository blogPostRepository)
     {
         _blogPostRepository = blogPostRepository;
-        _contentFormatter = contentFormatter;
     }
 
-    public async Task<List<ShortBlogPostOutput>> GetManyAsync(
+    public async Task<List<BlogPostOutput>> GetManyAsync(
         int maxCount,
         DateTime minPublishDate,
         string? authorName = null)
@@ -49,11 +44,11 @@ public class BlogPostsService : IBlogPostsService
             minPublishDate: minPublishDate);
         
         return blogPosts
-            .Select(x => new ShortBlogPostOutput(
+            .Select(x => new BlogPostOutput(
                 AuthorName: x.Author.Name,
                 Title: x.Title,
                 PublishDate: x.PublishDate,
-                Content: _contentFormatter.FormatShort(x.Content)))
+                Content: x.Content))
             .ToList();
     }
 }

@@ -1,5 +1,4 @@
 using Quakeroach.Blog.Backend.Api.Middleware;
-using Quakeroach.Blog.Backend.Api.Services.Logic;
 using Quakeroach.Blog.Backend.Api.Services.Repositories;
 using Quakeroach.Blog.Backend.Api.Services.TopLevel;
 
@@ -16,8 +15,6 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         builder.Services
-            .AddScoped<IContentPieceFormatter, ContentPieceFormatter>()
-            .AddScoped<IContentFormatter, ContentFormatter>()
             .AddScoped<IBlogPostRepository, BlogPostRepository>()
             .AddScoped<IBlogPostsService, BlogPostsService>();
 

@@ -4,4 +4,4 @@ public record BlogPost(
     User Author,
     string Title,
     DateTime PublishDate,
-    Content Content) : Entity;
+    string Content) : Entity;
