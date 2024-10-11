@@ -8,7 +8,6 @@ public interface IBlogPostRepository : IRepositoryBase<BlogPost>
 {
     Task<List<BlogPost>> GetAsync(
         int maxCount,
-        string? authorName = null,
         DateTime? minPublishDate = null,
         DateTime? maxPublishDate = null);
 }
@@ -19,16 +18,10 @@ public class BlogPostRepository : RepositoryBase<BlogPost>, IBlogPostRepository
 
     public async Task<List<BlogPost>> GetAsync(
         int maxCount,
-        string? authorName = null,
         DateTime? minPublishDate = null,
         DateTime? maxPublishDate = null)
     {
         IQueryable<BlogPost> query = DbContext.BlogPosts;
-
-        if (authorName is not null)
-        {
-            query = query.Where(x => x.Author.Name == authorName);
-        }
 
         if (minPublishDate is not null)
         {

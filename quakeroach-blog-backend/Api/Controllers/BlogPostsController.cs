@@ -17,13 +17,11 @@ namespace Quakeroach.Blog.Backend.Api.Controllers
         [HttpGet]
         public async Task<List<BlogPostOutput>> GetMany(
             [FromQuery] int maxCount,
-            [FromQuery] DateTime minPublishDate,
-            [FromQuery] string? authorName = null)
+            [FromQuery] DateTime minPublishDate)
         {
             return await _blogPostsService.GetManyAsync(
                 maxCount: maxCount,
-                minPublishDate: minPublishDate,
-                authorName: authorName);
+                minPublishDate: minPublishDate);
         }
     }
 }

@@ -6,15 +6,13 @@ public interface IBlogPostsService
 {
     Task<List<BlogPostOutput>> GetManyAsync(
         int maxCount,
-        DateTime minPublishDate,
-        string? authorName = null);
+        DateTime minPublishDate);
 }
 
 public class NonPositiveMaxCountException(int maxCount)
     : ValidationException($"Provided max count ({maxCount}) must be positive");
 
 public record BlogPostOutput(
-    string AuthorName,
     string Title,
     DateTime PublishDate,
     string Content);
@@ -30,8 +28,7 @@ public class BlogPostsService : IBlogPostsService
 
     public async Task<List<BlogPostOutput>> GetManyAsync(
         int maxCount,
-        DateTime minPublishDate,
-        string? authorName = null)
+        DateTime minPublishDate)
     {
         if (maxCount <= 0)
         {
@@ -40,12 +37,10 @@ public class BlogPostsService : IBlogPostsService
 
         var blogPosts = await _blogPostRepository.GetAsync(
             maxCount: maxCount,
-            authorName: authorName,
             minPublishDate: minPublishDate);
         
         return blogPosts
             .Select(x => new BlogPostOutput(
-                AuthorName: x.Author.Name,
                 Title: x.Title,
                 PublishDate: x.PublishDate,
                 Content: x.Content))

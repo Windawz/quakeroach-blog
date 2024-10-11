@@ -9,8 +9,6 @@ public class MainDbContext : DbContext
 
     public required DbSet<BlogPost> BlogPosts { get; init; }
 
-    public required DbSet<User> Users { get; init; }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
