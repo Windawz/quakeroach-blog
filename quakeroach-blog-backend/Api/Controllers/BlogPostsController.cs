@@ -23,5 +23,11 @@ namespace Quakeroach.Blog.Backend.Api.Controllers
                 maxCount: maxCount,
                 minPublishDate: minPublishDate);
         }
+
+        [HttpGet("{id}")]
+        public async Task<BlogPostOutput> Get([FromRoute] long id)
+        {
+            return await _blogPostsService.GetAsync(id);
+        }
     }
 }

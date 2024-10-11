@@ -35,7 +35,7 @@ public class Program
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
-        app.UseMiddleware<ValidationExceptionHandlerMiddleware>();
+        app.UseMiddleware<BusinessExceptionHandlerMiddleware>();
         app.MapControllers();
 
         app.Run();

@@ -1,3 +1,4 @@
+using Quakeroach.Blog.Backend.Api.Exceptions;
 using Quakeroach.Blog.Backend.Api.Services.Repositories;
 
 namespace Quakeroach.Blog.Backend.Api.Services.TopLevel;
@@ -7,10 +8,9 @@ public interface IBlogPostsService
     Task<List<BlogPostOutput>> GetManyAsync(
         int maxCount,
         DateTime minPublishDate);
+    
+    Task<BlogPostOutput> GetAsync(long id);
 }
-
-public class NonPositiveMaxCountException(int maxCount)
-    : ValidationException($"Provided max count ({maxCount}) must be positive");
 
 public record BlogPostOutput(
     string Title,
@@ -35,7 +35,7 @@ public class BlogPostsService : IBlogPostsService
             throw new NonPositiveMaxCountException(maxCount);
         }
 
-        var blogPosts = await _blogPostRepository.GetAsync(
+        var blogPosts = await _blogPostRepository.GetManyAsync(
             maxCount: maxCount,
             minPublishDate: minPublishDate);
         
@@ -46,4 +46,21 @@ public class BlogPostsService : IBlogPostsService
                 Content: x.Content))
             .ToList();
     }
+
+    public async Task<BlogPostOutput> GetAsync(long id)
+    {
+        var blogPost = await _blogPostRepository.FindAsync(id)
+            ?? throw new BlogPostIdNotFoundException(id);
+        
+        return new BlogPostOutput(
+            Title: blogPost.Title,
+            PublishDate: blogPost.PublishDate,
+            Content: blogPost.Content);
+    }
+
+    public class NonPositiveMaxCountException(int maxCount)
+        : BadInputException($"Provided max count ({maxCount}) must be positive");
+    
+    public class BlogPostIdNotFoundException(long id)
+        : NotFoundException($"Blog post with provided id ({id}) does not exist");
 }
