@@ -29,5 +29,13 @@ namespace Quakeroach.Blog.Backend.Api.Controllers
         {
             return await _blogPostsService.GetAsync(id);
         }
+
+        [HttpPost]
+        public async Task<CreatedAtActionResult> Create([FromBody] BlogPostCreationInput input)
+        {
+            long id = await _blogPostsService.CreateAsync(input);
+
+            return CreatedAtAction(nameof(Get), new { id }, null);
+        }
     }
 }

@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using Quakeroach.Blog.Backend.Api.Domain;
 using Quakeroach.Blog.Backend.Api.Exceptions;
 using Quakeroach.Blog.Backend.Api.Services.Repositories;
 
@@ -10,11 +12,17 @@ public interface IBlogPostsService
         DateTime minPublishDate);
     
     Task<BlogPostOutput> GetAsync(long id);
+
+    Task<long> CreateAsync(BlogPostCreationInput input);
 }
 
 public record BlogPostOutput(
     string Title,
     DateTime PublishDate,
+    string Content);
+
+public record BlogPostCreationInput(
+    string Title,
     string Content);
 
 public class BlogPostsService : IBlogPostsService
@@ -56,6 +64,20 @@ public class BlogPostsService : IBlogPostsService
             Title: blogPost.Title,
             PublishDate: blogPost.PublishDate,
             Content: blogPost.Content);
+    }
+
+    public async Task<long> CreateAsync(BlogPostCreationInput input)
+    {
+        var publishDate = DateTime.UtcNow;
+
+        var blogPost = new BlogPost(
+            Title: input.Title,
+            PublishDate: publishDate,
+            Content: input.Content);
+        
+        long id = await _blogPostRepository.AddAsync(blogPost);
+
+        return id;
     }
 
     public class NonPositiveMaxCountException(int maxCount)
