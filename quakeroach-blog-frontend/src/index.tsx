@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -8,6 +8,7 @@ import Button from './components/Button';
 import Belt from './components/Belt';
 import LoginPage from './pages/LoginPage';
 import WritePage from './pages/WritePage';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -29,19 +30,27 @@ const router = createBrowserRouter([
 ]);
 
 root.render(
-  <React.StrictMode>
-    
-    <div className="top-nav-bar">
-      <Button url="/">Home</Button>
-      <Belt direction="horizontal">
-        <Button url="/write">Write</Button>
-        <Button url="/login">Log In</Button>
-      </Belt>
-    </div>
+  <ErrorBoundary
+    fallbackRender={(props): ReactNode => {
+      const x = 23;
 
-    <RouterProvider router={router} />
-
-  </React.StrictMode>
+      return (
+        <div>
+          Something went wrong.
+        </div>
+      );
+    }}>
+    <React.StrictMode>
+      <div className="top-nav-bar">
+        <Button url="/">Home</Button>
+        <Belt direction="horizontal">
+          <Button url="/write">Write</Button>
+          <Button url="/login">Log In</Button>
+        </Belt>
+      </div>
+      <RouterProvider router={router} />
+    </React.StrictMode>
+  </ErrorBoundary>
 );
 
 // If you want to start measuring performance in your app, pass a function
