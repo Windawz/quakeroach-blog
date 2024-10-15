@@ -18,6 +18,10 @@ body {
   margin: 4px;
 }
 
+body > iframe {
+  display: none,
+}
+
 input[type="text"], textarea {
   background-color: #00000049;
   border-style: none;

@@ -1,17 +1,14 @@
 import './MainPage.css'
 import Box from "../components/Box";
+import { ENVARS } from '../envars';
 
 export default function MainPage() {
-  function f() {
-    throw new Error("AAAA");
-  }
-
   return (
     <div className="main-page">
       <Box>
         Hello
         <br />
-        {f()}
+        Hello {ENVARS.baseApiUrl}
       </Box>
     </div>
   );

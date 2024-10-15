@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosHeaders, AxiosInstance } from "axios";
 import moment, { Moment } from "moment";
+import AppError from "./AppError";
 
 export default class BackendClient {
   private readonly axiosInstance: AxiosInstance;
@@ -79,7 +80,7 @@ export default class BackendClient {
   }
 }
 
-export class BackendClientError extends Error {
+export class BackendClientError extends AppError {
   public readonly endpoint: string;
 
   constructor(endpoint: string, message?: string) {

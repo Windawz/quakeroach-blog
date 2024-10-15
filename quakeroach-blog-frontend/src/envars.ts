@@ -1,3 +1,5 @@
+import AppError from "./types/AppError";
+
 export const ENVARS = {
   get baseApiUrl(): string {
     const result = process.env.REACT_APP_BASE_API_URL;
@@ -9,7 +11,7 @@ export const ENVARS = {
   }
 };
 
-export class UndefinedEnvarError extends Error {
+export class UndefinedEnvarError extends AppError {
   constructor(envarName: string) {
     super(`Envar "${envarName}" not defined`);
   }
