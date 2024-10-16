@@ -1,0 +1,17 @@
+.top-nav-bar {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  align-items: end;
+}
+
+.top-nav-bar .button {
+  font-weight: bold;
+}
+
+.top-nav-bar > .button:first-child {
+  font-size: 20px;
+}
+
+.top-nav-bar > .belt:nth-child(2) {
+  justify-content: flex-end;
+}

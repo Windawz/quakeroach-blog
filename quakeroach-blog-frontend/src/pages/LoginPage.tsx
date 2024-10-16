@@ -4,7 +4,7 @@ export default function LoginPage() {
   return (
     <div className="login-page">
       <Box>
-        Hello
+        Env is "{process.env.NODE_ENV}"
       </Box>
     </div>
   );

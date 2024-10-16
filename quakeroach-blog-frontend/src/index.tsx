@@ -3,9 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Button from './components/Button';
-import Belt from './components/Belt';
-import { ROUTES } from './routes';
+import { ROUTES } from './globals/routes';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,13 +11,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <div className="top-nav-bar">
-      <Button url="/main">Home</Button>
-      <Belt direction="horizontal">
-        <Button url="/write">Write</Button>
-        <Button url="/login">Log In</Button>
-      </Belt>
-    </div>
     <RouterProvider router={createBrowserRouter(ROUTES)} />
   </React.StrictMode>
 );
