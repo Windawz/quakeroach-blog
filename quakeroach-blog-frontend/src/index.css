@@ -1,9 +1,18 @@
 :root {
-  --main-text-color: #e2a129;
+  --main-color: #e2a129;
+  --accent-color-a: #f4f456;
+  --accent-color-b: #52D394;
+  --main-background-color: #000000;
+  --box-background-color-a: #5e5e5e6e;
+  --box-background-color-b: #00000049;
+  --box-border-color: #444444;
+  --readable-text-color-a: #ebebeb;
+  --readable-text-color-b: #000000; 
+  --separator-color: #666666;
 }
 
 body {
-  background-color: #000000;
+  background-color: var(--main-background-color);
   background-image: url("https://quakeroach.net/image/bg_qr.png");
   background-attachment: fixed;
   background-repeat: no-repeat;
@@ -13,15 +22,32 @@ body {
   font-family: monospace;
 
   font-size: 14px;
-  color: var(--main-text-color);
+  color: var(--main-color);
 
   margin: 4px;
 }
 
+.separator {
+  border-style: solid;
+  border-width: 1px 0 0 0;
+  border-color: var(--box-border-color);
+  margin: 10px 0;
+}
+
+.box {
+  background-color: var(--box-background-color-a);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--box-border-color);
+  padding: 8px;
+  margin: 4px;
+  position: relative;
+}
+
 input[type="text"], textarea {
-  background-color: #00000049;
+  background-color: var(--box-background-color-b);
   border-style: none;
-  color: #a7a7a7;
+  color: var(--readable-text-color-a);
 }
 
 input[type="text"]:focus-visible, textarea:focus-visible {
@@ -29,6 +55,6 @@ input[type="text"]:focus-visible, textarea:focus-visible {
 }
 
 input[type="text"]::selection, textarea::selection {
-  background-color: var(--main-text-color);
-  color: black;
+  background-color: var(--main-color);
+  color: var(--readable-text-color-b);
 }

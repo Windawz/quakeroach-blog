@@ -1,17 +1,14 @@
-.top-nav-bar {
+.main-layout-navbar {
   display: grid;
-  grid-template-columns: 50% 50%;
-  align-items: end;
+  grid-template-rows: repeat(1, 1fr);
+  grid-template-columns: repeat(2, 1fr);
 }
 
-.top-nav-bar .button {
-  font-weight: bold;
+.main-layout-navbar-left {
+  display: flex;
 }
 
-.top-nav-bar > .button:first-child {
-  font-size: 20px;
-}
-
-.top-nav-bar > .belt:nth-child(2) {
-  justify-content: flex-end;
+.main-layout-navbar-right {
+  display: flex;
+  flex-direction: row-reverse;
 }

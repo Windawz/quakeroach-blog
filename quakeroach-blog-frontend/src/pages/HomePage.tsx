@@ -1,15 +1,46 @@
 import './HomePage.css'
-import Box from "../components/Box";
-import { ENVARS } from '../globals/envars';
+import BlogPostPreview from '../components/BlogPostPreview';
+import moment from 'moment';
 
 export default function HomePage() {
   return (
     <div className="home-page">
-      <Box>
-        Hello
-        <br />
-        Hello "{ENVARS.baseApiUrl}"
-      </Box>
+      <BlogPostPreview
+        id={666}
+        title='My Blog Post'
+        authorName='Windawz'
+        publishDate={moment('2024-10-11')}
+        content={'This is my blog\'s content. Very interesting stuff, I know.'} />
+      <BlogPostPreview
+        id={666}
+        title='My Blog Post'
+        authorName='Windawz'
+        publishDate={moment('2024-10-11')}
+        content={'This is my blog\'s content. Very interesting stuff, I know.'} />
+      <BlogPostPreview
+        id={666}
+        title='My Blog Post'
+        authorName='Windawz'
+        publishDate={moment('2024-10-11')}
+        content={'This is my blog\'s content. Very interesting stuff, I know. This is my blog\'s content. Very interesting stuff, I know. This is my blog\'s content. Very interesting stuff, I know. This is my blog\'s content. Very interesting stuff, I know. This is my blog\'s content. Very interesting stuff, I know. This is my blog\'s content. Very interesting stuff, I know.'} />
+      <BlogPostPreview
+        id={666}
+        title='My Blog Post'
+        authorName='Windawz'
+        publishDate={moment('2024-10-11')}
+        content={'This is my blog\'s content. Very interesting stuff, I know.'} />
+      <BlogPostPreview
+        id={666}
+        title='My Blog Post'
+        authorName='Windawz'
+        publishDate={moment('2024-10-11')}
+        content={'This is my blog\'s content. Very interesting stuff, I know.'} />
+      <BlogPostPreview
+        id={666}
+        title='My Blog Post'
+        authorName='Windawz'
+        publishDate={moment('2024-10-11')}
+        content={'This is my blog\'s content. Very interesting stuff, I know.'} />
     </div>
   );
 }
