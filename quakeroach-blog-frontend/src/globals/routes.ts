@@ -5,7 +5,7 @@ import WritePage from "../pages/WritePage";
 import NotFoundPage from "../pages/NotFoundPage";
 import MainLayout from "../layouts/MainLayout";
 
-export const ROUTES: RouteObject[] = [
+export const routes: RouteObject[] = [
   {
     Component: MainLayout,
     children: [

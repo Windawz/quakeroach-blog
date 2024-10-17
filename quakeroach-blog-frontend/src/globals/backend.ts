@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosHeaders } from "axios";
 import moment, { Moment } from "moment";
-import { ENVARS } from "./envars";
+import { envars } from "./envars";
 import { BackendError } from "../errors/BackendError";
 
 interface BlogPostOutput {
@@ -15,14 +15,14 @@ interface BlogPostCreationInput {
 }
 
 const axiosInstance = axios.create({
-  baseURL: ENVARS.baseApiUrl,
+  baseURL: envars.baseApiUrl,
 });
 
 function toBackendError(endpoint: string, error: AxiosError) : BackendError {
   return new BackendError(endpoint, error.response?.statusText);
 }
 
-export const BACKEND = {
+export const backend = {
   async getManyBlogPosts(maxCount: number, minPublishDate: Moment) : Promise<BlogPostOutput[]> {
     const endpoint = `/blogPosts`;
   

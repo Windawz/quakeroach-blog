@@ -1,6 +1,6 @@
 import UndefinedEnvarError from '../errors/UndefinedEnvarError';
 
-export const ENVARS = {
+export const envars = {
   get baseApiUrl() : string {
     return getRequiredEnvar('REACT_APP_BASE_API_URL');
   }
