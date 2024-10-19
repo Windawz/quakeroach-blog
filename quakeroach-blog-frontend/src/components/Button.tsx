@@ -1,21 +1,41 @@
 import './Button.css';
 
-interface IButtonProps {
+interface BaseButtonProps {
   className?: string;
-  url: string;
   children?: any;
 }
 
-export default function Button({ className, url, children } : IButtonProps) {
+interface UrlButtonProps extends BaseButtonProps {
+  kind: 'urlButton';
+  url: string;
+}
+
+interface ActionButtonProps extends BaseButtonProps {
+  kind: 'actionButton';
+  action: () => void;
+}
+
+type ButtonProps = UrlButtonProps | ActionButtonProps;
+
+export default function Button(props : ButtonProps) {
   let resultingClassName = 'button box';
 
-  if (className !== undefined) {
-    resultingClassName = `${resultingClassName} ${className}`;
+  if (props.className !== undefined) {
+    resultingClassName = `${resultingClassName} ${props.className}`;
   }
 
-  return (
-    <a href={url} className={resultingClassName}>
-      {children}
-    </a>
-  );
+  switch (props.kind) {
+    case 'urlButton':
+      return (
+        <a href={props.url} className={resultingClassName}>
+          {props.children}
+        </a>
+      );
+    case 'actionButton':
+      return (
+        <div className={resultingClassName} onClick={props.action}>
+          {props.children}
+        </div>
+      );
+  }
 }

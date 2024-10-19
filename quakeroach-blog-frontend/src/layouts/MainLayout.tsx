@@ -10,11 +10,11 @@ export default function MainLayout() {
     <div className='main-layout'>
       <div className="main-layout-navbar">
         <div className="main-layout-navbar-left">
-          <Button url="/home" className='main-layout-navbar-button-home'>Home</Button>
+          <Button kind='urlButton' url="/home" className='main-layout-navbar-button-home'>Home</Button>
         </div>
         <div className="main-layout-navbar-right">
-          <Button url="/login" className='main-layout-navbar-button-login'>Log In</Button>
-          <Button url="/write" className='main-layout-navbar-button-write'>Write</Button>
+          <Button kind='urlButton' url="/login" className='main-layout-navbar-button-login'>Log In</Button>
+          <Button kind='urlButton' url="/write" className='main-layout-navbar-button-write'>Write</Button>
         </div>
       </div>
       <ErrorBoundary fallbackRender={(props) => <ErrorDisplay error={props.error as AppError} />}>
