@@ -34,7 +34,7 @@ body {
   margin: 10px 0;
 }
 
-.box {
+.box, .button {
   background-color: var(--box-background-color-a);
   border-width: 1px;
   border-style: solid;
@@ -42,6 +42,15 @@ body {
   padding: 8px;
   margin: 4px;
   position: relative;
+}
+
+.button {
+  display: inline-block;
+}
+
+a.button {
+  color: var(--main-color);
+  text-decoration-line: none;
 }
 
 input[type="text"], textarea {
