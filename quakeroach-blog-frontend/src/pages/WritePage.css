@@ -1,13 +1,22 @@
 .editor-container {
-  display: flex;
+  display: block;
   justify-content: center;
 }
 
-.editor {
+.editor-title {
+  width: 100%;
+  font-size: 120%;
+}
+
+.editor-content {
   min-width: 100%;
-  min-height: 80vh;
+  min-height: 70vh;
   text-align: left;
   vertical-align: top;
   resize: none;
   font-size: 120%;
+}
+
+.editor-label {
+  display: block;
 }

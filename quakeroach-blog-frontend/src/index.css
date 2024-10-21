@@ -9,6 +9,8 @@
   --readable-text-color-a: #ebebeb;
   --readable-text-color-b: #000000; 
   --separator-color: #666666;
+  --scrollbar-thumb-color: var(--box-border-color);
+  --scrollbar-track-color: var(--box-background-color-a);
 }
 
 body {
@@ -24,7 +26,10 @@ body {
   font-size: 14px;
   color: var(--main-color);
 
-  margin: 4px;
+  padding: 4px;
+  margin: 0px;
+
+  scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
 }
 
 .separator {
@@ -34,29 +39,40 @@ body {
   margin: 10px 0;
 }
 
-.box, .button {
+:not(.box) > .box,
+.box > * {
+  margin: 4px;
+}
+
+.box {
   background-color: var(--box-background-color-a);
   border-width: 1px;
   border-style: solid;
   border-color: var(--box-border-color);
   padding: 8px;
-  margin: 4px;
   position: relative;
+  font-family: inherit;
+  font-size: inherit;
+  mix-blend-mode: lighten;
 }
 
 .button {
   display: inline-block;
+  cursor: pointer;
 }
 
-a.button {
+a.button, button.button {
   color: var(--main-color);
   text-decoration-line: none;
 }
 
 input[type="text"], textarea {
   background-color: var(--box-background-color-b);
-  border-style: none;
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--box-border-color);
   color: var(--readable-text-color-a);
+  font-family: inherit;
 }
 
 input[type="text"]:focus-visible, textarea:focus-visible {

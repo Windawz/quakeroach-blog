@@ -9,15 +9,15 @@ export default function MainLayout() {
     <div className='main-layout'>
       <div className='main-layout-navbar'>
         <div className='main-layout-navbar-left'>
-          <a className='button main-layout-navbar-button-home' href='/home'>
+          <a className='box button main-layout-navbar-button-home' href='/home'>
             Home
           </a>
         </div>
         <div className='main-layout-navbar-right'>
-          <a className='button main-layout-navbar-button-login' href='/login'>
+          <a className='box button main-layout-navbar-button-login' href='/login'>
           Log In
         </a>
-          <a className='button main-layout-navbar-button-write' href='/write'>
+          <a className='box button main-layout-navbar-button-write' href='/write'>
           Write
         </a>
         </div>
