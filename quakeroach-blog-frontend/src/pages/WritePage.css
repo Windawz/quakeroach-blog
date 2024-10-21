@@ -1,11 +1,13 @@
-.writing-area > .box {
+.editor-container {
   display: flex;
   justify-content: center;
 }
 
-.writing-area textarea {
+.editor {
   min-width: 100%;
   min-height: 80vh;
   text-align: left;
   vertical-align: top;
+  resize: none;
+  font-size: 120%;
 }
