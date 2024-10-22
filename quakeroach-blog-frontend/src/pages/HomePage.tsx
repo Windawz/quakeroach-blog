@@ -1,5 +1,5 @@
 import './HomePage.css'
-import BlogPostPreview from '../components/BlogPostPreview';
+import BlogPost from '../components/BlogPost';
 import moment from 'moment';
 import { backend, BlogPostOutput } from '../globals/backend';
 import { useEffect, useState } from 'react';
@@ -33,7 +33,7 @@ export default function HomePage() {
   return (
     <div className="home-page">
       {blogPosts.map(x => (
-        <BlogPostPreview
+        <BlogPost
           id={666}
           authorName='Unknown'
           title={x.title}

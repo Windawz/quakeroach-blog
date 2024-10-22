@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
-import './BlogPostPreview.css';
+import './BlogPost.css';
 
-interface BlogPostPreviewProps {
+interface BlogPostProps {
   id: number,
   title: string;
   authorName: string;
@@ -9,30 +9,30 @@ interface BlogPostPreviewProps {
   content: string;
 }
 
-export default function BlogPostPreview({
+export default function BlogPost({
   id,
   title,
   authorName,
   publishDate,
   content,
-} : BlogPostPreviewProps) {
+} : BlogPostProps) {
   return (
-    <div className='blog-post-preview box'>
-      <div className='blog-post-preview-header'>
-        <div className='blog-post-preview-header-title'>
+    <div className='blog-post box'>
+      <div className='blog-post-header'>
+        <div className='blog-post-header-title'>
           <a href={`/blogpost/${id}`}>
             {title}
           </a>
         </div>
-        <div className='blog-post-preview-header-author'>
+        <div className='blog-post-header-author'>
           by {authorName}
         </div>
-        <div className='blog-post-preview-header-date'>
+        <div className='blog-post-header-date'>
           published at {publishDate.format()}
         </div>
       </div>
       <div className='separator' />
-      <div className='blog-post-preview-content'>
+      <div className='blog-post-content'>
         {content}
       </div>
     </div>
