@@ -11,6 +11,7 @@
   --separator-color: #666666;
   --scrollbar-thumb-color: var(--box-border-color);
   --scrollbar-track-color: var(--box-background-color-a);
+  --nested-box-shadow-color: #202020;
 }
 
 body {
@@ -44,7 +45,12 @@ body {
   margin: 4px;
 }
 
+.box > .box {
+  filter: drop-shadow(2px 2px 1px var(--nested-box-shadow-color));
+}
+
 .box {
+  backdrop-filter: blur(2px);
   background-color: var(--box-background-color-a);
   border-width: 1px;
   border-style: solid;
@@ -53,7 +59,6 @@ body {
   position: relative;
   font-family: inherit;
   font-size: inherit;
-  mix-blend-mode: lighten;
 }
 
 .button {
@@ -73,6 +78,7 @@ input[type="text"], textarea {
   border-color: var(--box-border-color);
   color: var(--readable-text-color-a);
   font-family: inherit;
+  font-size: 120%;
 }
 
 input[type="text"]:focus-visible, textarea:focus-visible {
@@ -82,4 +88,8 @@ input[type="text"]:focus-visible, textarea:focus-visible {
 input[type="text"]::selection, textarea::selection {
   background-color: var(--main-color);
   color: var(--readable-text-color-b);
+}
+
+label {
+  display: block;
 }

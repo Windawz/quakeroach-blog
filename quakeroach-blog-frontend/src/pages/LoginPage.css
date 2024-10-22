@@ -1,0 +1,11 @@
+.login-container-outer {
+  justify-content: center;
+  min-height: 80vh;
+  display: flex;
+}
+
+.login-container {
+  align-self: center;
+  align-content: center;
+  backdrop-filter: blur(5px);
+}
