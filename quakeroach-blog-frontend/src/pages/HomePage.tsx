@@ -34,7 +34,7 @@ export default function HomePage() {
     <div className="home-page">
       {blogPosts.map(x => (
         <BlogPost
-          id={666}
+          id={x.id}
           authorName='Unknown'
           title={x.title}
           publishDate={x.publishDate}

@@ -17,6 +17,7 @@ public interface IBlogPostsService
 }
 
 public record BlogPostOutput(
+    long Id,
     string Title,
     DateTime PublishDate,
     string Content);
@@ -49,6 +50,7 @@ public class BlogPostsService : IBlogPostsService
         
         return blogPosts
             .Select(x => new BlogPostOutput(
+                Id: x.Id,
                 Title: x.Title,
                 PublishDate: x.PublishDate,
                 Content: x.Content))
@@ -61,6 +63,7 @@ public class BlogPostsService : IBlogPostsService
             ?? throw new BlogPostIdNotFoundException(id);
         
         return new BlogPostOutput(
+            Id: blogPost.Id,
             Title: blogPost.Title,
             PublishDate: blogPost.PublishDate,
             Content: blogPost.Content);

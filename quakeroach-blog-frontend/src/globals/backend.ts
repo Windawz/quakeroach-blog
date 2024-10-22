@@ -4,6 +4,7 @@ import { envars } from "./envars";
 import { BackendError } from "../errors/BackendError";
 
 export interface BlogPostOutput {
+  id: number;
   title: string;
   publishDate: Moment;
   content: string;
@@ -48,6 +49,7 @@ export const backend = {
       }
     
       return (response.data as any[]).map((x) => { return {
+        id: x.id,
         title: x.title,
         publishDate: moment(x.publishDate),
         content: x.content,
@@ -71,6 +73,7 @@ export const backend = {
       }
     
       return {
+        id: response.data.id,
         title: response.data.title,
         publishDate: moment(response.data.publishDate),
         content: response.data.content,
