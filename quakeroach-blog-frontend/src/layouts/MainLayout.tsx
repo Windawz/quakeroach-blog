@@ -5,6 +5,14 @@ import AppError from "../errors/AppError";
 import './MainLayout.css';
 
 export default function MainLayout() {
+  const devPageButton = process.env.NODE_ENV === 'development'
+    ? (
+      <a className='box button main-layout-navbar-button-dev' href='/dev'>
+        Dev
+      </a>
+    )
+    : undefined;
+
   return (
     <div className='main-layout'>
       <div className='main-layout-navbar'>
@@ -15,11 +23,12 @@ export default function MainLayout() {
         </div>
         <div className='main-layout-navbar-right'>
           <a className='box button main-layout-navbar-button-login' href='/login'>
-          Log In
-        </a>
+            Log In
+          </a>
           <a className='box button main-layout-navbar-button-write' href='/write'>
-          Write
-        </a>
+            Write
+          </a>
+          {devPageButton}
         </div>
       </div>
       <ErrorBoundary fallbackRender={(props) => <ErrorDisplay error={props.error as AppError} />}>
