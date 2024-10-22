@@ -3,13 +3,13 @@ import moment, { Moment } from "moment";
 import { envars } from "./envars";
 import { BackendError } from "../errors/BackendError";
 
-interface BlogPostOutput {
+export interface BlogPostOutput {
   title: string;
   publishDate: Moment;
   content: string;
 }
 
-interface BlogPostCreationInput {
+export interface BlogPostCreationInput {
   title: string;
   content: string;
 }
@@ -19,7 +19,7 @@ const axiosInstance = axios.create({
 });
 
 function toBackendError(endpoint: string, error: AxiosError) : BackendError {
-  return new BackendError(endpoint, error.response?.statusText);
+  return new BackendError({ endpoint, inner: error });
 }
 
 function tryGetLocation<T, D>(response: AxiosResponse<T, D>) : string | undefined {
@@ -93,7 +93,7 @@ export const backend = {
       const location = tryGetLocation(response);
       
       if (location === undefined) {
-        throw new BackendError(endpoint, 'No location header in response to extract id from');
+        throw new BackendError({ endpoint, message: 'No location header in response to extract id from' });
       }
 
       return Number.parseInt(location.split('/').at(-1)!);

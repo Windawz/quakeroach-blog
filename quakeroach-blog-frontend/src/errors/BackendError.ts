@@ -1,10 +1,17 @@
+import { AxiosError } from "axios";
 import AppError from "./AppError";
+
+interface BackendErrorParams {
+  endpoint: string;
+  message?: string;
+  inner?: AxiosError;
+}
 
 export class BackendError extends AppError {
   public readonly endpoint: string;
 
-  public constructor(endpoint: string, message?: string) {
-    super({ message });
+  public constructor({endpoint, message, inner} : BackendErrorParams) {
+    super({ message, inner });
 
     this.endpoint = endpoint;
   }

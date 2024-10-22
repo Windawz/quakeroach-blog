@@ -16,6 +16,21 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        builder.Services.AddCors(o =>
+        {
+            string? frontendUrl = builder.Configuration
+                .GetSection("Frontend:Url")
+                .Get<string>();
+            
+            if (frontendUrl is not null)
+            {
+                o.AddPolicy("AllowFrontend", x =>
+                {
+                    x.WithOrigins(frontendUrl);
+                });
+            }
+        });
+
         builder.Services.AddTransient<BusinessExceptionHandlerMiddleware>();
 
         builder.Services.AddDbContext<MainDbContext>(o =>
@@ -36,6 +51,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseCors("AllowFrontend");
         app.UseAuthorization();
         app.UseMiddleware<BusinessExceptionHandlerMiddleware>();
         app.MapControllers();
