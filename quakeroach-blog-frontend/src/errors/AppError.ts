@@ -5,6 +5,7 @@ interface AppErrorParams {
 }
 
 export default abstract class AppError extends Error {
+  public readonly isAppError: boolean = true;
   public readonly userFriendlyMessage?: string;
 
   protected constructor({ message, inner, userFriendlyMessage }: AppErrorParams) {
