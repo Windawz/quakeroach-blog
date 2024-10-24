@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Quakeroach.Blog.Backend.Api.Domain;
 using Quakeroach.Blog.Backend.Api.Exceptions;
-using Quakeroach.Blog.Backend.Api.Services.Repositories;
+using Quakeroach.Blog.Backend.Api.Storage;
 
 namespace Quakeroach.Blog.Backend.Api.Services.TopLevel;
 
@@ -28,11 +28,11 @@ public record BlogPostCreationInput(
 
 public class BlogPostsService : IBlogPostsService
 {
-    private readonly IBlogPostRepository _blogPostRepository;
+    private readonly MainDbContext _dbContext;
 
-    public BlogPostsService(IBlogPostRepository blogPostRepository)
+    public BlogPostsService(MainDbContext dbContext)
     {
-        _blogPostRepository = blogPostRepository;
+        _dbContext = dbContext;
     }
 
     public async Task<List<BlogPostOutput>> GetManyAsync(
@@ -44,10 +44,12 @@ public class BlogPostsService : IBlogPostsService
             throw new NonPositiveMaxCountException(maxCount);
         }
 
-        var blogPosts = await _blogPostRepository.GetManyAsync(
-            maxCount: maxCount,
-            minPublishDate: minPublishDate);
-        
+        var blogPosts = await _dbContext.BlogPosts
+            .OrderByDescending(x => x.PublishDate)
+            .Where(x => x.PublishDate >= minPublishDate)
+            .Take(maxCount)
+            .ToListAsync();
+
         return blogPosts
             .Select(x => new BlogPostOutput(
                 Id: x.Id,
@@ -59,8 +61,8 @@ public class BlogPostsService : IBlogPostsService
 
     public async Task<BlogPostOutput> GetAsync(long id)
     {
-        var blogPost = await _blogPostRepository.FindAsync(id)
-            ?? throw new BlogPostIdNotFoundException(id);
+        var blogPost = await _dbContext.BlogPosts.FindAsync(id)
+            ?? throw new BlogPostNotFoundException(id);
         
         return new BlogPostOutput(
             Id: blogPost.Id,
@@ -73,19 +75,17 @@ public class BlogPostsService : IBlogPostsService
     {
         var publishDate = DateTime.UtcNow;
 
-        var blogPost = new BlogPost(
-            Title: input.Title,
-            PublishDate: publishDate,
-            Content: input.Content);
-        
-        long id = await _blogPostRepository.AddAsync(blogPost);
+        var blogPost = new BlogPost
+        {
+            Title = input.Title,
+            PublishDate = publishDate,
+            Content = input.Content,
+        };
 
-        return id;
+        _dbContext.BlogPosts.Add(blogPost);
+
+        await _dbContext.SaveChangesAsync();
+
+        return blogPost.Id;
     }
-
-    public class NonPositiveMaxCountException(int maxCount)
-        : BadInputException($"Provided max count ({maxCount}) must be positive");
-    
-    public class BlogPostIdNotFoundException(long id)
-        : NotFoundException($"Blog post with provided id ({id}) does not exist");
 }

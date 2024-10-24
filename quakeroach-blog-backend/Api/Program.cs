@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Quakeroach.Blog.Backend.Api.Domain;
 using Quakeroach.Blog.Backend.Api.Middleware;
-using Quakeroach.Blog.Backend.Api.Services.Repositories;
+using Quakeroach.Blog.Backend.Api.Services.Common;
 using Quakeroach.Blog.Backend.Api.Services.TopLevel;
 using Quakeroach.Blog.Backend.Api.Storage;
 
@@ -39,8 +41,11 @@ public class Program
         });
 
         builder.Services
-            .AddScoped<IBlogPostRepository, BlogPostRepository>()
-            .AddScoped<IBlogPostsService, BlogPostsService>();
+            .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
+            .AddScoped<ITokenFormatter, TokenFormatter>()
+            .AddScoped<ITokenGenerator, TokenGenerator>()
+            .AddScoped<IBlogPostsService, BlogPostsService>()
+            .AddScoped<ILoginService, LoginService>();
 
         var app = builder.Build();
 

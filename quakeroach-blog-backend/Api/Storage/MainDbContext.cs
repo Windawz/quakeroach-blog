@@ -11,16 +11,18 @@ public class MainDbContext : DbContext
 
     public required DbSet<User> Users { get; init; }
 
+    public required DbSet<RefreshToken> RefreshTokens { get; init; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-        optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<User>().HasIndex(x => x.Name);
+        modelBuilder.Entity<User>().HasIndex(x => x.Name).IsUnique();
+        modelBuilder.Entity<RefreshToken>().HasIndex(x => x.Name).IsUnique();
     }
 }

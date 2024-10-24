@@ -14,6 +14,7 @@ public class BusinessExceptionHandlerMiddleware : IMiddleware
         {
             int? statusCode = e switch
             {
+                UserAlreadyExistsException => StatusCodes.Status409Conflict,
                 BadInputException => StatusCodes.Status400BadRequest,
                 NotFoundException => StatusCodes.Status404NotFound,
                 _ => null,

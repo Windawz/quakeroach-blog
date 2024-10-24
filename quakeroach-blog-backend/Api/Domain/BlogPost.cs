@@ -1,6 +1,10 @@
 namespace Quakeroach.Blog.Backend.Api.Domain;
 
-public record BlogPost(
-    string Title,
-    DateTime PublishDate,
-    string Content) : Entity;
+public class BlogPost : Entity
+{
+    public required string Title { get; set; }
+
+    public required DateTime PublishDate { get; set; }
+    
+    public required string Content { get; set; }
+}
