@@ -1,41 +1,40 @@
 using Microsoft.AspNetCore.Mvc;
 using Quakeroach.Blog.Backend.Api.Services.TopLevel;
 
-namespace Quakeroach.Blog.Backend.Api.Controllers
+namespace Quakeroach.Blog.Backend.Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class BlogPostsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BlogPostsController : ControllerBase
+    private readonly IBlogPostsService _blogPostsService;
+
+    public BlogPostsController(IBlogPostsService blogPostsService)
     {
-        private readonly IBlogPostsService _blogPostsService;
+        _blogPostsService = blogPostsService;
+    }
 
-        public BlogPostsController(IBlogPostsService blogPostsService)
-        {
-            _blogPostsService = blogPostsService;
-        }
+    [HttpGet]
+    public async Task<List<BlogPostOutput>> GetMany(
+        [FromQuery] int maxCount,
+        [FromQuery] DateTime minPublishDate)
+    {
+        return await _blogPostsService.GetManyAsync(
+            maxCount: maxCount,
+            minPublishDate: minPublishDate);
+    }
 
-        [HttpGet]
-        public async Task<List<BlogPostOutput>> GetMany(
-            [FromQuery] int maxCount,
-            [FromQuery] DateTime minPublishDate)
-        {
-            return await _blogPostsService.GetManyAsync(
-                maxCount: maxCount,
-                minPublishDate: minPublishDate);
-        }
+    [HttpGet("{id}")]
+    public async Task<BlogPostOutput> Get([FromRoute] long id)
+    {
+        return await _blogPostsService.GetAsync(id);
+    }
 
-        [HttpGet("{id}")]
-        public async Task<BlogPostOutput> Get([FromRoute] long id)
-        {
-            return await _blogPostsService.GetAsync(id);
-        }
+    [HttpPost]
+    public async Task<CreatedAtActionResult> Create([FromBody] BlogPostCreationInput input)
+    {
+        long id = await _blogPostsService.CreateAsync(input);
 
-        [HttpPost]
-        public async Task<CreatedAtActionResult> Create([FromBody] BlogPostCreationInput input)
-        {
-            long id = await _blogPostsService.CreateAsync(input);
-
-            return CreatedAtAction(nameof(Get), new { id }, null);
-        }
+        return CreatedAtAction(nameof(Get), new { id }, null);
     }
 }
