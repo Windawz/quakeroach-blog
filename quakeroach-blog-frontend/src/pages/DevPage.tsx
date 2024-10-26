@@ -1,5 +1,5 @@
 import moment from "moment";
-import { backend, BlogPostOutput } from "../globals/backend";
+import { BlogPostOutput, getBackend } from "../globals/backend";
 import { envars } from "../globals/envars";
 import { useEffect, useState } from "react";
 
@@ -7,7 +7,7 @@ export default function DevPage() {
   const [blogPosts, setBlogPosts] = useState<BlogPostOutput[] | undefined>(undefined);
 
   useEffect(() => {
-    backend.blogPosts.getMany(10, moment('2024-01-01'))
+    getBackend().blogPosts.getMany(10, moment('2024-01-01'))
       .then(x => {
         setBlogPosts(x);
       });
