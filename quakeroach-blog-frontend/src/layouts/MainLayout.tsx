@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorDisplay from "../components/ErrorDisplay";
-import AppError from "../errors/AppError";
 import './MainLayout.css';
 
 export default function MainLayout() {
@@ -31,7 +30,7 @@ export default function MainLayout() {
           {devPageButton}
         </div>
       </div>
-      <ErrorBoundary fallbackRender={(props) => <ErrorDisplay error={props.error as AppError} />}>
+      <ErrorBoundary fallbackRender={(props) => <ErrorDisplay error={props.error as Error} />}>
         <Outlet />
       </ErrorBoundary>
     </div>

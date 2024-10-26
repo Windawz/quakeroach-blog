@@ -11,7 +11,7 @@ export class BackendError extends AppError {
   public readonly endpoint: string;
 
   public constructor({endpoint, message, inner} : BackendErrorParams) {
-    super({ message, inner });
+    super({ message: `"${endpoint}"${message !== undefined ? (': ' + message) : ''}`, inner });
 
     this.endpoint = endpoint;
   }

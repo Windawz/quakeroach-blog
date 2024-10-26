@@ -9,7 +9,7 @@ export default function HomePage() {
   const [error, setError] = useState<unknown | undefined>(undefined);
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchData() {
       try {
         const data = await getBackend().blogPosts.getMany(10, moment('2024-01-01'));
         setBlogPosts(data);

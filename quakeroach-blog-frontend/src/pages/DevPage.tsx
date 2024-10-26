@@ -5,13 +5,24 @@ import { useEffect, useState } from "react";
 
 export default function DevPage() {
   const [blogPosts, setBlogPosts] = useState<BlogPostOutput[] | undefined>(undefined);
+  const [error, setError] = useState<unknown | undefined>(undefined);
 
   useEffect(() => {
-    getBackend().blogPosts.getMany(10, moment('2024-01-01'))
-      .then(x => {
-        setBlogPosts(x);
-      });
+    async function fetchData() {
+      try {
+        const data = await getBackend().blogPosts.getMany(10, moment('2024-01-01'));
+        setBlogPosts(data);
+      } catch (e) {
+        setError(e);
+      }
+    }
+
+    fetchData();
   }, [blogPosts?.length]);
+
+  if (error !== undefined) {
+    throw error;
+  }
 
   return (
     <div className='dev-page'>
