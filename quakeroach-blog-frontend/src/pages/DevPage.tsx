@@ -2,22 +2,16 @@ import moment from "moment";
 import { BlogPostOutput, getBackend } from "../globals/backend";
 import { envars } from "../globals/envars";
 import { useEffect, useState } from "react";
+import { forwardErrors } from "./utils/errorHandling";
 
 export default function DevPage() {
   const [blogPosts, setBlogPosts] = useState<BlogPostOutput[] | undefined>(undefined);
   const [error, setError] = useState<unknown | undefined>(undefined);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const data = await getBackend().blogPosts.getMany(10, moment('2024-01-01'));
-        setBlogPosts(data);
-      } catch (e) {
-        setError(e);
-      }
-    }
-
-    fetchData();
+    forwardErrors(setError, async () => {
+      setBlogPosts(await getBackend().blogPosts.getMany(10, moment('2024-01-01')));
+    });
   }, [blogPosts?.length]);
 
   if (error !== undefined) {
