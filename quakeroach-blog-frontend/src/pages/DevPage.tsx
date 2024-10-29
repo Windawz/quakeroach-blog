@@ -2,7 +2,7 @@ import moment from "moment";
 import { BlogPostOutput, getBackend } from "../globals/backend";
 import { envars } from "../globals/envars";
 import { useEffect, useState } from "react";
-import { forwardErrors } from "./utils/errorHandling";
+import { forwardErrors } from "../utils/errorHandling";
 
 export default function DevPage() {
   const [blogPosts, setBlogPosts] = useState<BlogPostOutput[] | undefined>(undefined);
