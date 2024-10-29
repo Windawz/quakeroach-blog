@@ -15,12 +15,45 @@ export interface BlogPostCreationInput {
   content: string;
 }
 
+export interface LoginInput {
+  userName: string;
+  passwordText: string;
+}
+
+export interface LoginOutput {
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface RegisterInput {
+  userName: string;
+  passwordText: string;
+}
+
+export interface RefreshInput {
+  refreshToken: string;
+}
+
+export interface RefreshOutput {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface Backend {
   blogPosts: {
-    getMany(maxCount: number, minPublishDate: Moment): Promise<BlogPostOutput[]>;
+    getMany(
+      maxCount: number,
+      minPublishDate: Moment
+    ): Promise<BlogPostOutput[]>;
     get(id: number): Promise<BlogPostOutput | undefined>;
     create(input: BlogPostCreationInput): Promise<number>;
-  }
+  };
+
+  auth: {
+    login(input: LoginInput): Promise<LoginOutput>;
+    register(input: RegisterInput): Promise<void>;
+    refresh(input: RefreshInput): Promise<RefreshOutput>;
+  };
 }
 
 export function getBackend(): Backend {
@@ -98,6 +131,47 @@ export function getBackend(): Backend {
           return Number.parseInt(location.split('/').at(-1)!);
         },
       },
+
+      auth: {
+        async login({ userName, passwordText }: LoginInput): Promise<LoginOutput> {
+          const response = await callApi(axiosInstance, '/auth/login', {
+            method: 'post',
+            data: {
+              userName: userName,
+              passwordText: passwordText,
+            },
+          });
+
+          return {
+            accessToken: response.data.accessToken,
+            refreshToken: response.data.refreshToken,
+          };
+        },
+
+        async register({ userName, passwordText }: RegisterInput): Promise<void> {
+          await callApi(axiosInstance, '/auth/register', {
+            method: 'post',
+            data: {
+              userName: userName,
+              passwordText: passwordText,
+            },
+          });
+        },
+
+        async refresh({ refreshToken }: RefreshInput): Promise<RefreshOutput> {
+          const response = await callApi(axiosInstance, '/auth/refresh', {
+            method: 'post',
+            data: {
+              refreshToken: refreshToken,
+            },
+          });
+
+          return {
+            accessToken: response.data.accessToken,
+            refreshToken: response.data.refreshToken,
+          };
+        },
+      },
     };
   }
 
@@ -127,4 +201,46 @@ function tryGetLocation<T, D>(response: AxiosResponse<T, D>) : string | undefine
   }
 
   return (response.headers['Location'] as string);
+}
+
+interface ApiCallGetParams {
+  method: 'get';
+  params?: any;
+}
+
+interface ApiCallPostParams {
+  method: 'post';
+  params?: any;
+  data?: any;
+}
+
+async function callApi(
+  axiosInstance: AxiosInstance,
+  endpoint: string,
+  apiCallParams: ApiCallGetParams | ApiCallPostParams,
+): Promise<AxiosResponse> {
+  let response = undefined;
+
+  try {
+    if (apiCallParams.method === 'get') {
+      response = await axiosInstance.get(endpoint, {
+        params: apiCallParams.params,
+      });
+    } else if (apiCallParams.method === 'post') {
+      response = await axiosInstance.post(endpoint, apiCallParams.data, {
+        params: apiCallParams.params,
+      });
+    }
+  } catch (error) {
+    throw toBackendError(endpoint, error as AxiosError);
+  }
+
+  if (response === undefined) {
+    throw new BackendError({
+      endpoint: endpoint,
+      message: 'Response is undefined',
+    });
+  }
+
+  return response;
 }

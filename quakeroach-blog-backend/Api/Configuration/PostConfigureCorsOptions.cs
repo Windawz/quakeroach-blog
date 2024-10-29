@@ -16,7 +16,9 @@ public class PostConfigureCorsOptions : IPostConfigureOptions<CorsOptions>
     {
         options.AddPolicy(CorsConstants.DefaultPolicy, x =>
         {
-            x.WithOrigins(_frontendOptions.Url);
+            x.WithOrigins(_frontendOptions.Url)
+                .AllowAnyMethod()
+                .AllowAnyHeader();
         });
     }
 }

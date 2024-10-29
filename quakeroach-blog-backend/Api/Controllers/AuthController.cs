@@ -4,15 +4,15 @@ using Quakeroach.Blog.Backend.Api.Services.TopLevel;
 
 namespace Quakeroach.Blog.Backend.Api.Controllers;
 
-[Route("api")]
+[Route("api/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly AuthService _authService;
+    private readonly IAuthService _authService;
 
-    public AuthController(AuthService loginService)
+    public AuthController(IAuthService authService)
     {
-        _authService = loginService;
+        _authService = authService;
     }
 
     [HttpPost("login")]

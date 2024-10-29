@@ -39,7 +39,7 @@ public class AccessTokenOperator : IAccessTokenOperator
             issuedAt: now,
             signingCredentials: new SigningCredentials(
                 _authOptions.SigningKey,
-                SecurityAlgorithms.Sha256));
+                SecurityAlgorithms.HmacSha256Signature));
         
         return tokenHandler.WriteToken(token);
     }
