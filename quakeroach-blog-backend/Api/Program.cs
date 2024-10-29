@@ -26,8 +26,11 @@ public class Program
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer();
 
-        builder.Services.ConfigureOptions<ConfigureAuthOptions>()
-            .ConfigureOptions<PostConfigureJwtBearerOptions>();
+        builder.Services
+            .ConfigureOptions<ConfigureAuthOptions>()
+            .ConfigureOptions<ConfigureFrontendOptions>()
+            .ConfigureOptions<PostConfigureJwtBearerOptions>()
+            .ConfigureOptions<PostConfigureCorsOptions>();
 
         builder.Services.AddTransient<BusinessExceptionHandlerMiddleware>();
 
@@ -37,6 +40,7 @@ public class Program
         });
 
         builder.Services
+            .AddHttpContextAccessor()
             .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
             .AddScoped<IAccessTokenOperator, AccessTokenOperator>()
             .AddScoped<IRefreshTokenOperator, RefreshTokenOperator>()
