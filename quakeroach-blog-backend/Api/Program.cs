@@ -54,7 +54,7 @@ public class Program
             .AddScoped<ITokenFormatter, TokenFormatter>()
             .AddScoped<ITokenGenerator, TokenGenerator>()
             .AddScoped<IBlogPostsService, BlogPostsService>()
-            .AddScoped<ILoginService, LoginService>();
+            .AddScoped<IAuthService, AuthService>();
 
         var app = builder.Build();
 

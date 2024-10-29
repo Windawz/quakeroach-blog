@@ -8,24 +8,24 @@ namespace Quakeroach.Blog.Backend.Api.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly LoginService _loginService;
+    private readonly AuthService _authService;
 
-    public AuthController(LoginService loginService)
+    public AuthController(AuthService loginService)
     {
-        _loginService = loginService;
+        _authService = loginService;
     }
 
     [HttpPost("login")]
     public async Task<LoginOutput> Login([FromBody] LoginInput input)
     {
-        return await _loginService.LoginAsync(input);
+        return await _authService.LoginAsync(input);
     }
 
     [Authorize]
     [HttpPost("register")]
     public async Task<ActionResult> Register([FromBody] RegisterInput input)
     {
-        await _loginService.RegisterAsync(input);
+        await _authService.RegisterAsync(input);
 
         return Ok();
     }
@@ -33,6 +33,6 @@ public class AuthController : ControllerBase
     [HttpPost("refresh")]
     public async Task<RefreshOutput> Refresh([FromBody] RefreshInput input)
     {
-        return await _loginService.RefreshAsync(input);
+        return await _authService.RefreshAsync(input);
     }
 }

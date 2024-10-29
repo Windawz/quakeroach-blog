@@ -7,7 +7,7 @@ using Quakeroach.Blog.Backend.Api.Storage;
 
 namespace Quakeroach.Blog.Backend.Api.Services.TopLevel;
 
-public interface ILoginService
+public interface IAuthService
 {
     Task<LoginOutput> LoginAsync(LoginInput input);
 
@@ -26,14 +26,14 @@ public record RefreshInput(string RefreshToken);
 
 public record RefreshOutput(string AccessToken, string RefreshToken);
 
-public class LoginService : ILoginService
+public class AuthService : IAuthService
 {
     private readonly MainDbContext _dbContext;
     private readonly IPasswordHasher<User> _passwordHasher;
     private readonly ITokenFormatter _tokenFormatter;
     private readonly ITokenGenerator _tokenGenerator;
 
-    public LoginService(
+    public AuthService(
         MainDbContext dbContext,
         IPasswordHasher<User> passwordHasher,
         ITokenFormatter tokenFormatter,
