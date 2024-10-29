@@ -19,6 +19,8 @@ public class AuthOptions
 
     public required TimeSpan RefreshTokenLifeTime { get; set; }
 
+    public required TimeSpan RefreshTokenCleanupInterval { get; set; }
+
     public required string NameClaimType { get; set; } = ClaimTypes.Name;
 }
 

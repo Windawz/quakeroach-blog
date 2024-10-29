@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Quakeroach.Blog.Backend.Api.Configuration;
 using Quakeroach.Blog.Backend.Api.Domain;
 using Quakeroach.Blog.Backend.Api.Middleware;
+using Quakeroach.Blog.Backend.Api.Services.Background;
 using Quakeroach.Blog.Backend.Api.Services.Common;
 using Quakeroach.Blog.Backend.Api.Services.TopLevel;
 using Quakeroach.Blog.Backend.Api.Storage;
@@ -47,6 +48,8 @@ public class Program
             .AddScoped<IHttpContextView, HttpContextView>()
             .AddScoped<IBlogPostsService, BlogPostsService>()
             .AddScoped<IAuthService, AuthService>();
+        
+        builder.Services.AddHostedService<RefreshTokenCleaner>();
 
         var app = builder.Build();
 

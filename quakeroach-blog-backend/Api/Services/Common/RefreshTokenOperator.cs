@@ -15,6 +15,8 @@ public interface IRefreshTokenOperator
     string Format(RefreshToken token);
 
     Task DestroyAsync(RefreshToken token);
+
+    Task DestroyManyAsync(IEnumerable<RefreshToken> tokens);
 }
 
 public class RefreshTokenOperator : IRefreshTokenOperator
@@ -76,6 +78,16 @@ public class RefreshTokenOperator : IRefreshTokenOperator
     public async Task DestroyAsync(RefreshToken token)
     {
         _dbContext.RefreshTokens.Remove(token);
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task DestroyManyAsync(IEnumerable<RefreshToken> tokens)
+    {
+        foreach (var token in tokens)
+        {
+            _dbContext.RefreshTokens.Remove(token);
+        }
 
         await _dbContext.SaveChangesAsync();
     }
