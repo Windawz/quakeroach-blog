@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Quakeroach.Blog.Backend.Api.Services.TopLevel;
 
@@ -5,11 +6,11 @@ namespace Quakeroach.Blog.Backend.Api.Controllers;
 
 [Route("api")]
 [ApiController]
-public class LoginController : ControllerBase
+public class AuthController : ControllerBase
 {
     private readonly LoginService _loginService;
 
-    public LoginController(LoginService loginService)
+    public AuthController(LoginService loginService)
     {
         _loginService = loginService;
     }
@@ -20,6 +21,7 @@ public class LoginController : ControllerBase
         return await _loginService.LoginAsync(input);
     }
 
+    [Authorize]
     [HttpPost("register")]
     public async Task<ActionResult> Register([FromBody] RegisterInput input)
     {

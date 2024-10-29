@@ -1,8 +1,6 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using Quakeroach.Blog.Backend.Api.Configuration;
 using Quakeroach.Blog.Backend.Api.Domain;
 using Quakeroach.Blog.Backend.Api.Middleware;
@@ -21,6 +19,7 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddOptions();
 
         builder.Services.AddCors(o =>
         {
@@ -38,22 +37,10 @@ public class Program
         });
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(o =>
-            {
-                var authOptions = builder.Configuration.GetRequiredSection("JwtBearerAuth")
-                    .Get<JwtBearerAuthOptions>()
-                        ?? throw new InvalidOperationException($"Failed to bind {nameof(JwtBearerAuthOptions)}");
+            .AddJwtBearer();
 
-                var parameters = o.TokenValidationParameters;
-
-                parameters.ValidateIssuer = true;
-                parameters.ValidIssuer = authOptions.Issuer;
-                parameters.ValidateAudience = true;
-                parameters.ValidAudience = authOptions.Audience;
-                parameters.ValidateLifetime = true;
-                parameters.IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(authOptions.IssuerSigningKey));
-            });
+        builder.Services.ConfigureOptions<ConfigureAuthOptions>()
+            .ConfigureOptions<PostConfigureJwtBearerOptions>();
 
         builder.Services.AddTransient<BusinessExceptionHandlerMiddleware>();
 
