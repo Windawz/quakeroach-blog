@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Quakeroach.Blog.Backend.Api.Services.Common;
 using Quakeroach.Blog.Backend.Api.Services.TopLevel;
 
 namespace Quakeroach.Blog.Backend.Api.Controllers;
@@ -8,10 +10,14 @@ namespace Quakeroach.Blog.Backend.Api.Controllers;
 public class BlogPostsController : ControllerBase
 {
     private readonly IBlogPostsService _blogPostsService;
+    private readonly IHttpContextView _httpContextView;
 
-    public BlogPostsController(IBlogPostsService blogPostsService)
+    public BlogPostsController(
+        IBlogPostsService blogPostsService,
+        IHttpContextView httpContextView)
     {
         _blogPostsService = blogPostsService;
+        _httpContextView = httpContextView;
     }
 
     [HttpGet]
@@ -31,9 +37,12 @@ public class BlogPostsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<CreatedAtActionResult> Create([FromBody] BlogPostCreationInput input)
     {
-        long id = await _blogPostsService.CreateAsync(input);
+        string authorName = _httpContextView.UserName;
+
+        long id = await _blogPostsService.CreateAsync(authorName, input);
 
         return CreatedAtAction(nameof(Get), new { id }, null);
     }

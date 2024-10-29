@@ -13,12 +13,13 @@ public interface IBlogPostsService
     
     Task<BlogPostOutput> GetAsync(long id);
 
-    Task<long> CreateAsync(BlogPostCreationInput input);
+    Task<long> CreateAsync(string authorName, BlogPostCreationInput input);
 }
 
 public record BlogPostOutput(
     long Id,
     string Title,
+    string AuthorName,
     DateTime PublishDate,
     string Content);
 
@@ -54,6 +55,7 @@ public class BlogPostsService : IBlogPostsService
             .Select(x => new BlogPostOutput(
                 Id: x.Id,
                 Title: x.Title,
+                AuthorName: x.AuthorUser.Name,
                 PublishDate: x.PublishDate,
                 Content: x.Content))
             .ToList();
@@ -67,17 +69,23 @@ public class BlogPostsService : IBlogPostsService
         return new BlogPostOutput(
             Id: blogPost.Id,
             Title: blogPost.Title,
+            AuthorName: blogPost.AuthorUser.Name,
             PublishDate: blogPost.PublishDate,
             Content: blogPost.Content);
     }
 
-    public async Task<long> CreateAsync(BlogPostCreationInput input)
+    public async Task<long> CreateAsync(string authorName, BlogPostCreationInput input)
     {
         var publishDate = DateTime.UtcNow;
+        var authorUser = await _dbContext.Users
+            .Where(x => x.Name == authorName)
+            .SingleOrDefaultAsync()
+                ?? throw new UserDoesNotExistException(authorName);
 
         var blogPost = new BlogPost
         {
             Title = input.Title,
+            AuthorUser = authorUser,
             PublishDate = publishDate,
             Content = input.Content,
         };
