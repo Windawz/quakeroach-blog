@@ -38,6 +38,8 @@ public class Program
 
         builder.Services
             .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
+            .AddScoped<IAccessTokenOperator, AccessTokenOperator>()
+            .AddScoped<IRefreshTokenOperator, RefreshTokenOperator>()
             .AddScoped<IBlogPostsService, BlogPostsService>()
             .AddScoped<IAuthService, AuthService>();
 

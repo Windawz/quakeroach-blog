@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -17,6 +18,8 @@ public class AuthOptions
     public required TimeSpan AccessTokenLifeTime { get; set; }
 
     public required TimeSpan RefreshTokenLifeTime { get; set; }
+
+    public required string NameClaimType { get; set; } = ClaimTypes.Name;
 }
 
 public class ConfigureAuthOptions : IConfigureOptions<AuthOptions>
