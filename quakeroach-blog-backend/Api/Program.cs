@@ -51,8 +51,6 @@ public class Program
 
         builder.Services
             .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
-            .AddScoped<ITokenFormatter, TokenFormatter>()
-            .AddScoped<ITokenGenerator, TokenGenerator>()
             .AddScoped<IBlogPostsService, BlogPostsService>()
             .AddScoped<IAuthService, AuthService>();
 

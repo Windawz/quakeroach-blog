@@ -30,19 +30,19 @@ public class AuthService : IAuthService
 {
     private readonly MainDbContext _dbContext;
     private readonly IPasswordHasher<User> _passwordHasher;
-    private readonly ITokenFormatter _tokenFormatter;
-    private readonly ITokenGenerator _tokenGenerator;
+    private readonly IAccessTokenOperator _accessTokenOperator;
+    private readonly IRefreshTokenOperator _refreshTokenOperator;
 
     public AuthService(
         MainDbContext dbContext,
         IPasswordHasher<User> passwordHasher,
-        ITokenFormatter tokenFormatter,
-        ITokenGenerator tokenGenerator)
+        IAccessTokenOperator accessTokenOperator,
+        IRefreshTokenOperator refreshTokenOperator)
     {
         _dbContext = dbContext;
         _passwordHasher = passwordHasher;
-        _tokenFormatter = tokenFormatter;
-        _tokenGenerator = tokenGenerator;
+        _accessTokenOperator = accessTokenOperator;
+        _refreshTokenOperator = refreshTokenOperator;
     }
 
     public async Task<LoginOutput> LoginAsync(LoginInput input)
@@ -76,15 +76,12 @@ public class AuthService : IAuthService
             throw new InvalidUserCredentialsException();
         }
 
-        var (accessToken, refreshToken) = _tokenGenerator.Generate(user);
-
-        _dbContext.RefreshTokens.Add(refreshToken);
-
-        await _dbContext.SaveChangesAsync();
+        var accessToken = _accessTokenOperator.Create(user);
+        var refreshToken = await _refreshTokenOperator.CreateAsync(user);
 
         return new LoginOutput(
             accessToken,
-            _tokenFormatter.FormatRefreshToken(refreshToken));
+            _refreshTokenOperator.Format(refreshToken));
     }
 
     public async Task RegisterAsync(RegisterInput input)
@@ -115,24 +112,18 @@ public class AuthService : IAuthService
 
     public async Task<RefreshOutput> RefreshAsync(RefreshInput input)
     {
-        var providedName = _tokenFormatter
-            .ParseRefreshToken(input.RefreshToken)?.Name
-                ?? throw new InvalidRefreshTokenException();
+        var refreshToken = (await _refreshTokenOperator.BindAsync(input.RefreshToken))
+            ?? throw new InvalidRefreshTokenException();
 
-        var providedToken = await _dbContext.RefreshTokens
-            .SingleOrDefaultAsync(x => x.Name == providedName)
-                ?? throw new InvalidRefreshTokenException();
+        var user = refreshToken.User;
         
-        var user = providedToken.User;
+        await _refreshTokenOperator.DestroyAsync(refreshToken);
 
-        _dbContext.RefreshTokens.Remove(providedToken);
-
-        await _dbContext.SaveChangesAsync();
+        var newAccessToken = _accessTokenOperator.Create(user);
+        var newRefreshToken = await _refreshTokenOperator.CreateAsync(user);
         
-        var (newAccessToken, newRefreshToken) = _tokenGenerator.Generate(user);
-
         return new RefreshOutput(
             newAccessToken,
-            _tokenFormatter.FormatRefreshToken(newRefreshToken));
+            _refreshTokenOperator.Format(newRefreshToken));
     }
 }
