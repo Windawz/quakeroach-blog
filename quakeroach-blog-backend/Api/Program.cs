@@ -21,20 +21,7 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddOptions();
 
-        builder.Services.AddCors(o =>
-        {
-            string? frontendUrl = builder.Configuration
-                .GetSection("Frontend:Url")
-                .Get<string>();
-            
-            if (frontendUrl is not null)
-            {
-                o.AddPolicy("AllowFrontend", x =>
-                {
-                    x.WithOrigins(frontendUrl);
-                });
-            }
-        });
+        builder.Services.AddCors();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer();
@@ -63,7 +50,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-        app.UseCors("AllowFrontend");
+        app.UseCors(CorsConstants.DefaultPolicy);
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseMiddleware<BusinessExceptionHandlerMiddleware>();
