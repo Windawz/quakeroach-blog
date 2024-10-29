@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Quakeroach.Blog.Backend.Api.Domain;
 
@@ -5,7 +6,14 @@ namespace Quakeroach.Blog.Backend.Api.Storage;
 
 public class MainDbContext : DbContext
 {
-    public MainDbContext(DbContextOptions<MainDbContext> options) : base(options) { }
+    private readonly IPasswordHasher<User> _passwordHasher;
+
+    public MainDbContext(
+        DbContextOptions<MainDbContext> options,
+        IPasswordHasher<User> passwordHasher) : base(options)
+    {
+        _passwordHasher = passwordHasher;
+    }
 
     public required DbSet<BlogPost> BlogPosts { get; init; }
 
@@ -24,5 +32,17 @@ public class MainDbContext : DbContext
 
         modelBuilder.Entity<User>().HasIndex(x => x.Name).IsUnique();
         modelBuilder.Entity<RefreshToken>().HasIndex(x => x.Name).IsUnique();
+
+        var rootUser = new User
+        {
+            Id = -1,
+            Flags = UserFlags.PasswordChangeRequired,
+            Name = "root",
+            PasswordHash = "root",
+        };
+
+        rootUser.PasswordHash = _passwordHasher.HashPassword(rootUser, rootUser.PasswordHash);
+
+        modelBuilder.Entity<User>().HasData([rootUser]);
     }
 }
