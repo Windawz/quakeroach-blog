@@ -1,10 +1,10 @@
-.login-container-outer {
+.auth-container-outer {
   justify-content: center;
   min-height: 80vh;
   display: flex;
 }
 
-.login-container {
+.auth-container {
   align-self: center;
   align-content: center;
 }

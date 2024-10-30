@@ -21,7 +21,7 @@ export default function MainLayout() {
           </a>
         </div>
         <div className='main-layout-navbar-right'>
-          <a className='box button main-layout-navbar-button-login' href='/login'>
+          <a className='box button main-layout-navbar-button-login' href='/auth'>
             Log In
           </a>
           <a className='box button main-layout-navbar-button-write' href='/write'>

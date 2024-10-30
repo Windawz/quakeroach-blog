@@ -1,6 +1,6 @@
 import { RouteObject } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
-import LoginPage from '../pages/LoginPage';
+import AuthPage from '../pages/AuthPage';
 import WritePage from '../pages/WritePage';
 import NotFoundPage from '../pages/NotFoundPage';
 import MainLayout from '../layouts/MainLayout';
@@ -16,8 +16,8 @@ function makeRoutes(): RouteObject[] {
           Component: HomePage,
         },
         {
-          path: "login",
-          Component: LoginPage,
+          path: "auth",
+          Component: AuthPage,
         },
         {
           path: "write",
