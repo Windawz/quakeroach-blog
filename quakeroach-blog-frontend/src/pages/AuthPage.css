@@ -7,4 +7,9 @@
 .auth-container {
   align-self: center;
   align-content: center;
+  max-width: min-content;
+}
+
+.auth-failure-message {
+  color: red;
 }

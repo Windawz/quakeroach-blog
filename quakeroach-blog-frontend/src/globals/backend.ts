@@ -20,9 +20,13 @@ export interface LoginInput {
   passwordText: string;
 }
 
-export interface LoginOutput {
+export type LoginOutput = {
+  isSuccessful: true;
   accessToken: string;
   refreshToken: string;
+} | {
+  isSuccessful: false;
+  reason: string;
 }
 
 export interface RegisterInput {
@@ -134,15 +138,31 @@ export function getBackend(): Backend {
 
       auth: {
         async login({ userName, passwordText }: LoginInput): Promise<LoginOutput> {
-          const response = await callApi(axiosInstance, '/auth/login', {
-            method: 'post',
-            data: {
-              userName: userName,
-              passwordText: passwordText,
-            },
-          });
+          let response = undefined;
+
+          try {
+            response = await callApi(axiosInstance, "/auth/login", {
+              method: "post",
+              data: {
+                userName: userName,
+                passwordText: passwordText,
+              },
+            });
+          } catch (e) {
+            const error = e as BackendError;
+            
+            if (error.inner instanceof AxiosError && error.inner.status === 400) {
+              return {
+                isSuccessful: false,
+                reason: 'Invalid user name or password',
+              };
+            } else {
+              throw e;
+            }
+          }
 
           return {
+            isSuccessful: true,
             accessToken: response.data.accessToken,
             refreshToken: response.data.refreshToken,
           };
