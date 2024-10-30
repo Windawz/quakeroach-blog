@@ -21,41 +21,38 @@ public class RefreshTokenCleaner : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var now = DateTime.UtcNow;
-
-        if (now - _lastCleanupTime <= _authOptions.RefreshTokenCleanupInterval)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            return;
+            var now = DateTime.UtcNow;
+            var expiredRefreshTokens = new List<RefreshToken>();
+
+            if (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
+
+            using (var dbQueryScope = _serviceProvider.CreateScope())
+            {
+                var dbContext = dbQueryScope.ServiceProvider.GetRequiredService<MainDbContext>();
+                
+                expiredRefreshTokens = await dbContext.RefreshTokens
+                    .Where(x => now > x.ExpirationTime)
+                    .ToListAsync();
+            }
+
+            if (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
+
+            using (var destructionScope = _serviceProvider.CreateScope())
+            {
+                var refreshTokenOperator = destructionScope.ServiceProvider.GetRequiredService<IRefreshTokenOperator>();
+
+                await refreshTokenOperator.DestroyManyAsync(expiredRefreshTokens);
+            }
+
+            await Task.Delay(_authOptions.RefreshTokenCleanupInterval, stoppingToken);
         }
-
-        var expiredRefreshTokens = new List<RefreshToken>();
-
-        if (stoppingToken.IsCancellationRequested)
-        {
-            return;
-        }
-
-        using (var dbQueryScope = _serviceProvider.CreateScope())
-        {
-            var dbContext = dbQueryScope.ServiceProvider.GetRequiredService<MainDbContext>();
-            
-            expiredRefreshTokens = await dbContext.RefreshTokens
-                .Where(x => now - x.CreationTime > _authOptions.RefreshTokenLifeTime)
-                .ToListAsync();
-        }
-
-        if (stoppingToken.IsCancellationRequested)
-        {
-            return;
-        }
-
-        using (var destructionScope = _serviceProvider.CreateScope())
-        {
-            var refreshTokenOperator = destructionScope.ServiceProvider.GetRequiredService<IRefreshTokenOperator>();
-
-            await refreshTokenOperator.DestroyManyAsync(expiredRefreshTokens);
-        }
-
-        _lastCleanupTime = now;
     }
 }

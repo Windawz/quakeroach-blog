@@ -7,4 +7,6 @@ public class RefreshToken : Entity
     public required User User { get; set; }
 
     public required DateTime CreationTime { get; set; }
+
+    public required DateTime ExpirationTime { get; set; }
 }
