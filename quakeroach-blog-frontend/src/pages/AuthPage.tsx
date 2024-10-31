@@ -2,8 +2,8 @@ import { useCookies } from 'react-cookie';
 import './AuthPage.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { forwardErrors } from '../utils/errorHandling';
-import { getBackend } from '../globals/backend';
+import { forwardErrors } from '../lib/errorHandling';
+import { getBackend } from '../lib/backend';
 import { BackendError } from '../errors/BackendError';
 
 export default function AuthPage() {
@@ -29,7 +29,7 @@ export default function AuthPage() {
       },
       async () => {
         setFailureMessage(undefined);
-        
+
         const response = await getBackend().auth.login({
           userName: userName,
           passwordText: passwordText,

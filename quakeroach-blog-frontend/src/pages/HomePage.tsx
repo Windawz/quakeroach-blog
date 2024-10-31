@@ -1,9 +1,9 @@
 import './HomePage.css'
 import BlogPost from '../components/BlogPost';
 import moment from 'moment';
-import { BlogPostOutput, getBackend } from '../globals/backend';
+import { BlogPostOutput, getBackend } from '../lib/backend';
 import { useEffect, useState } from 'react';
-import { forwardErrors } from '../utils/errorHandling';
+import { forwardErrors } from '../lib/errorHandling';
 
 export default function HomePage() {
   const [blogPosts, setBlogPosts] = useState<BlogPostOutput[]>([]);
