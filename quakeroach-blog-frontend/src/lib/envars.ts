@@ -1,4 +1,4 @@
-import UndefinedEnvarError from '../errors/UndefinedEnvarError';
+import { AppError } from "./errorHandling";
 
 export const envars = {
   get baseApiUrl() : string {
@@ -10,7 +10,9 @@ function getRequiredEnvar(name: string): string {
   const value = process.env[name];
 
   if (value === undefined) {
-    throw new UndefinedEnvarError(name);
+    throw new AppError({
+      message: `Required envar "${value}" is undefined`,
+    });
   }
 
   return value;

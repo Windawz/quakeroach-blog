@@ -2,9 +2,8 @@ import { useCookies } from 'react-cookie';
 import './AuthPage.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { forwardErrors } from '../lib/errorHandling';
+import { AppError, forwardErrors } from '../lib/errorHandling';
 import { getBackend } from '../lib/backend';
-import { BackendError } from '../errors/BackendError';
 
 export default function AuthPage() {
   const [, setCookie, ] = useCookies(['quakeroach-blog-tokens']);
@@ -20,10 +19,8 @@ export default function AuthPage() {
 
     await forwardErrors(
       (e) => {
-        const error = e as BackendError;
-        const message = error.userFriendlyMessage !== undefined
-          ? error.userFriendlyMessage
-          : 'Unknown error';
+        const error = e as AppError;
+        const message = error.message ?? 'Unknown error';
 
         setFailureMessage(message);
       },

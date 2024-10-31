@@ -1,7 +1,7 @@
 import axios, { AxiosError, AxiosHeaders, AxiosInstance, AxiosResponse } from "axios";
 import moment, { Moment } from "moment";
 import { envars } from "./envars";
-import { BackendError } from "../errors/BackendError";
+import { AppError } from "./errorHandling";
 
 export interface BlogPostOutput {
   id: number;
@@ -26,7 +26,7 @@ export type LoginOutput = {
   refreshToken: string;
 } | {
   isSuccessful: false;
-  reason: string;
+  reason?: string;
 }
 
 export interface RegisterInput {
@@ -67,21 +67,19 @@ export function getBackend(): Backend {
     lazyBackend = {
       blogPosts: {
         async getMany(maxCount: number, minPublishDate: Moment) : Promise<BlogPostOutput[]> {
-          const endpoint = `/blogPosts`;
-        
-          let response = undefined;
-          try {
-            response = await axiosInstance.get(endpoint, {
+          const result = unwrapApiCallResult(
+            await callApi(axiosInstance, '/blogPosts', {
+              method: 'get',
               params: {
-                maxCount: maxCount,
+                maxCount,
                 minPublishDate: minPublishDate.format(),
               },
-            });
-          } catch (error) {
-            throw toBackendError(endpoint, error as AxiosError);
-          }
+            })
+          );
+
+          const data = result.response.data;
         
-          return (response.data as any[]).map((x) => { return {
+          return (data as any[]).map((x) => { return {
             id: x.id,
             title: x.title,
             publishDate: moment(x.publishDate),
@@ -90,46 +88,41 @@ export function getBackend(): Backend {
         },
       
         async get(id: number): Promise<BlogPostOutput | undefined> {
-          const endpoint = `/blogPosts/${id}`;
-          
-          let response = undefined;
-          try {
-            response = await axiosInstance.get(endpoint);
-          } catch (error) {
-            let axiosError = (error as AxiosError);
-        
-            if (axiosError.response?.status === 404) {
-              return undefined;
-            }
-        
-            throw toBackendError(endpoint, axiosError);
+          const result = await callApi(axiosInstance, `/blogPosts/${id}`, {
+            method: 'get',
+          });
+
+          if (result.kind === 'badRequest' && result.statusCode === 404) {
+            return undefined;
           }
-        
+
+          const data = unwrapApiCallResult(result).response.data;
+
           return {
-            id: response.data.id,
-            title: response.data.title,
-            publishDate: moment(response.data.publishDate),
-            content: response.data.content,
+            id: data.id,
+            title: data.title,
+            publishDate: moment(data.publishDate),
+            content: data.content,
           };
         },
       
         async create({ title, content } : BlogPostCreationInput): Promise<number> {
-          const endpoint = `/blogPosts`;
-        
-          let response = undefined;
-          try {
-            response = await axiosInstance.post(endpoint, {
-              title: title,
-              content: content,
-            });
-          } catch (error) {
-            throw toBackendError(endpoint, error as AxiosError);
-          }
+          const result = unwrapApiCallResult(
+            await callApi(axiosInstance, '/blogPosts', {
+              method: 'post',
+              data: {
+                title,
+                content,
+              },
+            })
+          );
   
-          const location = tryGetLocation(response);
+          const location = tryGetLocation(result.response);
           
           if (location === undefined) {
-            throw new BackendError({ endpoint, message: 'No location header in response to extract id from' });
+            throw new AppError({
+              message: 'No location header in response to extract id from',
+            });
           }
   
           return Number.parseInt(location.split('/').at(-1)!);
@@ -138,57 +131,57 @@ export function getBackend(): Backend {
 
       auth: {
         async login({ userName, passwordText }: LoginInput): Promise<LoginOutput> {
-          let response = undefined;
-
-          try {
-            response = await callApi(axiosInstance, "/auth/login", {
-              method: "post",
-              data: {
-                userName: userName,
-                passwordText: passwordText,
-              },
-            });
-          } catch (e) {
-            const error = e as BackendError;
-            
-            if (error.inner instanceof AxiosError && error.inner.status === 400) {
-              return {
-                isSuccessful: false,
-                reason: 'Invalid user name or password',
-              };
-            } else {
-              throw e;
-            }
-          }
-
-          return {
-            isSuccessful: true,
-            accessToken: response.data.accessToken,
-            refreshToken: response.data.refreshToken,
-          };
-        },
-
-        async register({ userName, passwordText }: RegisterInput): Promise<void> {
-          await callApi(axiosInstance, '/auth/register', {
-            method: 'post',
+          const result = await callApi(axiosInstance, "/auth/login", {
+            method: "post",
             data: {
               userName: userName,
               passwordText: passwordText,
             },
           });
+
+          if (result.kind === 'badRequest' && result.statusCode === 400) {
+            return {
+              isSuccessful: false,
+              reason: result.errorMessage,
+            };
+          }
+
+          const data = unwrapApiCallResult(result).response.data;
+
+          return {
+            isSuccessful: true,
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+          };
+        },
+
+        async register({ userName, passwordText }: RegisterInput): Promise<void> {
+          unwrapApiCallResult(
+            await callApi(axiosInstance, "/auth/register", {
+              method: "post",
+              data: {
+                userName: userName,
+                passwordText: passwordText,
+              },
+            })
+          );
         },
 
         async refresh({ refreshToken }: RefreshInput): Promise<RefreshOutput> {
-          const response = await callApi(axiosInstance, '/auth/refresh', {
-            method: 'post',
-            data: {
-              refreshToken: refreshToken,
-            },
-          });
+          const result = unwrapApiCallResult(
+            await callApi(axiosInstance, '/auth/refresh', {
+              method: 'post',
+              data: {
+                refreshToken: refreshToken,
+              },
+            })
+          );
+          
+          const data = result.response.data;
 
           return {
-            accessToken: response.data.accessToken,
-            refreshToken: response.data.refreshToken,
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
           };
         },
       },
@@ -211,10 +204,6 @@ function getAxiosInstance(): AxiosInstance {
   return lazyAxiosInstance;
 }
 
-function toBackendError(endpoint: string, error: AxiosError) : BackendError {
-  return new BackendError({ endpoint, inner: error });
-}
-
 function tryGetLocation<T, D>(response: AxiosResponse<T, D>) : string | undefined {
   if (!(response.headers instanceof AxiosHeaders) || !response.headers.has('Location')) {
     return undefined;
@@ -223,12 +212,10 @@ function tryGetLocation<T, D>(response: AxiosResponse<T, D>) : string | undefine
   return (response.headers['Location'] as string);
 }
 
-interface ApiCallGetParams {
+type ApiCallParams = {
   method: 'get';
   params?: any;
-}
-
-interface ApiCallPostParams {
+} | {
   method: 'post';
   params?: any;
   data?: any;
@@ -237,30 +224,88 @@ interface ApiCallPostParams {
 async function callApi(
   axiosInstance: AxiosInstance,
   endpoint: string,
-  apiCallParams: ApiCallGetParams | ApiCallPostParams,
-): Promise<AxiosResponse> {
+  apiCallParams: ApiCallParams
+): Promise<ApiCallResult> {
   let response = undefined;
 
   try {
-    if (apiCallParams.method === 'get') {
+    if (apiCallParams.method === "get") {
       response = await axiosInstance.get(endpoint, {
         params: apiCallParams.params,
       });
-    } else if (apiCallParams.method === 'post') {
+    } else if (apiCallParams.method === "post") {
       response = await axiosInstance.post(endpoint, apiCallParams.data, {
         params: apiCallParams.params,
       });
     }
   } catch (error) {
-    throw toBackendError(endpoint, error as AxiosError);
+    let errorResult: ApiCallResult | undefined = undefined;
+
+    if (error instanceof AxiosError && error.response !== undefined) {
+      const statusCode = error.response.status;
+      const subStatusCode = statusCode - 400;
+
+      if (subStatusCode >= 0 || subStatusCode < 100) {
+        const errorMessage = error.response.data.errorMessage;
+
+        errorResult = {
+          endpoint,
+          kind: "badRequest",
+          statusCode,
+          errorMessage:
+            errorMessage !== undefined && typeof errorMessage === "string"
+              ? errorMessage
+              : undefined,
+        };
+      }
+    }
+
+    if (errorResult !== undefined) {
+      return errorResult;
+    }
+
+    throw new AppError({
+      cause: error,
+    });
   }
 
   if (response === undefined) {
-    throw new BackendError({
-      endpoint: endpoint,
+    throw new AppError({
       message: 'Response is undefined',
     });
   }
 
-  return response;
+  return {
+    endpoint,
+    kind: "success",
+    response,
+  };
+}
+
+function unwrapApiCallResult(result: ApiCallResult): ApiCallSuccessResult {
+  if (result.kind === 'success') {
+    return result;
+  }
+
+  if (result.cause !== undefined) {
+    throw result.cause;
+  }
+
+  throw new AppError({
+    message: result.errorMessage,
+  });
+}
+
+type ApiCallResult = { endpoint: string; } & (ApiCallSuccessResult | ApiCallBadRequestResult);
+
+interface ApiCallSuccessResult {
+  kind: "success";
+  response: AxiosResponse;
+}
+
+interface ApiCallBadRequestResult {
+  kind: "badRequest";
+  statusCode: number;
+  errorMessage?: string;
+  cause?: unknown;
 }
