@@ -1,14 +1,25 @@
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorDisplay from "../components/ErrorDisplay";
 import './MainLayout.css';
+import { useAuth } from "../hooks/auth";
 
 export default function MainLayout() {
+  const auth = useAuth();
+
+  const logInButton = auth.isAuthenticated
+    ? undefined
+    : (
+      <Link className='box button main-layout-navbar-button-login' to='/auth'>
+        Log In
+      </Link>
+    );
+
   const devPageButton = process.env.NODE_ENV === 'development'
     ? (
-      <a className='box button main-layout-navbar-button-dev' href='/dev'>
+      <Link className='box button main-layout-navbar-button-dev' to='/dev'>
         Dev
-      </a>
+      </Link>
     )
     : undefined;
 
@@ -16,17 +27,15 @@ export default function MainLayout() {
     <div className='main-layout'>
       <div className='main-layout-navbar'>
         <div className='main-layout-navbar-left'>
-          <a className='box button main-layout-navbar-button-home' href='/home'>
+          <Link className='box button main-layout-navbar-button-home' to='/home'>
             Home
-          </a>
+          </Link>
         </div>
         <div className='main-layout-navbar-right'>
-          <a className='box button main-layout-navbar-button-login' href='/auth'>
-            Log In
-          </a>
-          <a className='box button main-layout-navbar-button-write' href='/write'>
+          {logInButton}
+          <Link className='box button main-layout-navbar-button-write' to='/write'>
             Write
-          </a>
+          </Link>
           {devPageButton}
         </div>
       </div>

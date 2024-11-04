@@ -4,6 +4,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { routes } from './lib/routes';
+import { AuthProvider } from './hooks/auth';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -11,7 +12,9 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <RouterProvider router={createBrowserRouter(routes)} />
+    <AuthProvider>
+      <RouterProvider router={createBrowserRouter(routes)} />
+    </AuthProvider>
   </React.StrictMode>
 );
 
