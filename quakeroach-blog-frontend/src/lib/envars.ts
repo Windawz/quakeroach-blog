@@ -11,7 +11,7 @@ function getRequiredEnvar(name: string): string {
 
   if (value === undefined) {
     throw new AppError({
-      message: `Required envar "${value}" is undefined`,
+      message: `Required envar "${name}" is undefined`,
     });
   }
 
