@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useApiState } from "./apiState";
 import { useNavigate } from "react-router-dom";
 import { apiCall } from "./apiCall";
-import assert from "assert";
-import { AppError } from "../errorHandling";
+import { updateApiStateOrAskForAuthOnExpiredTokens } from "./handleApiState";
 
 export function useQuery<TResponseData>(params: QueryParams<TResponseData>): QueryResult<TResponseData> {
   const navigate = useNavigate();
@@ -29,20 +28,7 @@ export function useQuery<TResponseData>(params: QueryParams<TResponseData>): Que
         return;
       }
 
-      if (response.kind === "tokensExpired") {
-        navigate("/auth");
-      } else {
-        if (response.refreshedTokens !== undefined) {
-          assert(apiState !== undefined, new AppError({
-            message: "Cannot refresh tokens mid-query because api state is undefined",
-          }));
-
-          setApiState({
-            userName: apiState!.userName,
-            tokens: response.refreshedTokens,
-          });
-        }
-
+      updateApiStateOrAskForAuthOnExpiredTokens(response, navigate, apiState, setApiState, response => {
         switch (response.kind) {
           case "success":
             const finalData = params.responseDataSelector !== undefined
@@ -63,7 +49,7 @@ export function useQuery<TResponseData>(params: QueryParams<TResponseData>): Que
             });
             break;
         }
-      }
+      });
     };
 
     performCall();
