@@ -4,7 +4,6 @@ import AuthPage from '../pages/AuthPage';
 import WritePage from '../pages/WritePage';
 import NotFoundPage from '../pages/NotFoundPage';
 import MainLayout from '../layouts/MainLayout';
-import DevPage from '../pages/DevPage';
 
 function makeRoutes(): RouteObject[] {
   const routes: RouteObject[] = [
@@ -30,13 +29,6 @@ function makeRoutes(): RouteObject[] {
       ],
     },
   ];
-
-  if (process.env.NODE_ENV === 'development') {
-    routes[0].children?.push({
-      path: "dev",
-      Component: DevPage,
-    });
-  }
 
   return routes;
 }
