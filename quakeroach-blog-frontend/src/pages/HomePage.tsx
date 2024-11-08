@@ -1,23 +1,19 @@
 import './HomePage.css'
 import BlogPost from '../components/BlogPost';
 import moment from 'moment';
-import { useQuery } from '../lib/backend/useQuery';
+import { useBlogPosts } from '../lib/backend/queries';
 
 export default function HomePage() {
-  const queryResult = useQuery({
-    method: "get",
-    url: "blogPosts",
-    params: {
-      maxCount: 10,
-      minPublishDate: moment('2024-01-01').format(),
-    },
+  const queryResult = useBlogPosts({
+    maxCount: 10,
+    minPublishDate: moment('2024-01-01'),
   });
 
   let contents = undefined;
 
   switch (queryResult.kind) {
     case "success":
-      const blogPosts = queryResult.data as any[];
+      const blogPosts = queryResult.data;
 
       if (blogPosts.length === 0) {
         contents = (
@@ -26,14 +22,14 @@ export default function HomePage() {
           </div>
         );
       } else {
-        contents = (queryResult.data as any[]).map(x => (
-        <BlogPost
-          id={x.id}
-          authorName={x.authorName}
-          title={x.title}
-          publishDate={x.publishDate}
-          content={x.content} />
-      ));
+        contents = blogPosts.map(x => (
+          <BlogPost
+            id={x.id}
+            authorName={x.authorName}
+            title={x.title}
+            publishDate={x.publishDate}
+            content={x.content} />
+        ));
       }
       break;
     case "pending":

@@ -5,7 +5,7 @@ import { apiCall } from "./apiCall";
 import assert from "assert";
 import { AppError } from "../errorHandling";
 
-export function useQuery<TResponseData>(params: QueryParams): QueryResult<TResponseData> {
+export function useQuery<TResponseData>(params: QueryParams<TResponseData>): QueryResult<TResponseData> {
   const navigate = useNavigate();
   const { apiState, setApiState } = useApiState();
   const [result, setResult] = useState<QueryResult<TResponseData>>({ kind: "pending" });
@@ -45,10 +45,14 @@ export function useQuery<TResponseData>(params: QueryParams): QueryResult<TRespo
 
         switch (response.kind) {
           case "success":
+            const finalData = params.responseDataSelector !== undefined
+              ? params.responseDataSelector(response.data)
+              : response.data;
+
             setResult({
               kind: "success",
               headers: response.headers,
-              data: response.data,
+              data: finalData,
             });
             break;
           case "error":
@@ -95,18 +99,19 @@ export interface QuerySuccessResultHeaders {
   location?: string;
 }
 
-export type QueryParams = GetQueryParams | PostQueryParams;
+export type QueryParams<TResponseData> = GetQueryParams<TResponseData> | PostQueryParams<TResponseData>;
 
-export interface GetQueryParams extends CommonQueryParams {
+export interface GetQueryParams<TResponseData> extends BaseQueryParams<TResponseData> {
   method: "get";
 }
 
-export interface PostQueryParams extends CommonQueryParams {
+export interface PostQueryParams<TResponseData> extends BaseQueryParams<TResponseData> {
   method: "post";
   data?: any;
 }
 
-interface CommonQueryParams {
+export interface BaseQueryParams<TResponseData> {
   url: string;
   params?: any;
+  responseDataSelector?: (value: any) => TResponseData;
 }
