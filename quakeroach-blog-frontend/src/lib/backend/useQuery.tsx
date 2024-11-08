@@ -5,10 +5,10 @@ import { apiCall } from "./apiCall";
 import assert from "assert";
 import { AppError } from "../errorHandling";
 
-export function useQuery(params: QueryParams): QueryResult {
+export function useQuery<TResponseData>(params: QueryParams): QueryResult<TResponseData> {
   const navigate = useNavigate();
   const { apiState, setApiState } = useApiState();
-  const [result, setResult] = useState<QueryResult>({ kind: "pending" });
+  const [result, setResult] = useState<QueryResult<TResponseData>>({ kind: "pending" });
 
   const data = params.method === "post" ? params.data : undefined;
 
@@ -67,25 +67,18 @@ export function useQuery(params: QueryParams): QueryResult {
     return () => {
       active = false;
     };
-  }, [
-    params.method,
-    params.url,
-    params.params,
-    data,
-    navigate,
-    apiState,
-    setApiState,
-  ]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return result;
 }
 
-export type QueryResult = QuerySuccessResult | QueryPendingResult | QueryErrorResult;
+export type QueryResult<TResponseData> = QuerySuccessResult<TResponseData> | QueryPendingResult | QueryErrorResult;
 
-export interface QuerySuccessResult {
+export interface QuerySuccessResult<TResponseData> {
   kind: "success";
   headers: QuerySuccessResultHeaders;
-  data?: any;
+  data: TResponseData;
 }
 
 export interface QueryPendingResult {
