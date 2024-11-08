@@ -4,6 +4,8 @@ import AuthPage from '../pages/AuthPage';
 import WritePage from '../pages/WritePage';
 import NotFoundPage from '../pages/NotFoundPage';
 import MainLayout from '../layouts/MainLayout';
+import RequireAuthenticated from '../components/RequireAuthenticated';
+import RequireUnauthenticated from '../components/RequireUnauthenticated';
 
 function makeRoutes(): RouteObject[] {
   const routes: RouteObject[] = [
@@ -16,11 +18,15 @@ function makeRoutes(): RouteObject[] {
         },
         {
           path: "auth",
-          Component: AuthPage,
+          element: <RequireUnauthenticated>
+            <AuthPage />
+          </RequireUnauthenticated>,
         },
         {
           path: "write",
-          Component: WritePage,
+          element: <RequireAuthenticated>
+            <WritePage />
+          </RequireAuthenticated>,
         },
         {
           path: "*",
