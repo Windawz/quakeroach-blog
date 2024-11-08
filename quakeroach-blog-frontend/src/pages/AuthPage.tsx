@@ -1,55 +1,34 @@
-import { useCookies } from 'react-cookie';
 import './AuthPage.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppError, forwardErrors } from '../lib/errorHandling';
-import { getBackend } from '../lib/backend';
+import { useAuth } from '../lib/backend/detail/useAuth';
 
 export default function AuthPage() {
-  const [, setCookie, ] = useCookies(['quakeroach-blog-tokens']);
+  const {
+    setInputUserName,
+    setInputPasswordText,
+    submitInput,
+  } = useAuth();
 
   const navigate = useNavigate();
-
-  const [userName, setUserName] = useState<string>('');
-  const [passwordText, setPasswordText] = useState<string>('');
   const [failureMessage, setFailureMessage] = useState<string | undefined>(undefined);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    await forwardErrors(
-      (e) => {
-        const error = e as AppError;
-        const message = error.message ?? 'Unknown error';
-
-        setFailureMessage(message);
-      },
-      async () => {
-        setFailureMessage(undefined);
-
-        const response = await getBackend().auth.login({
-          userName: userName,
-          passwordText: passwordText,
-        });
-
-        if (!response.isSuccessful) {
-          setFailureMessage(response.reason);
-        } else {
-          const { accessToken, refreshToken } = response;
-          
-          setCookie('quakeroach-blog-tokens', { accessToken, refreshToken });
-          navigate('/home');
-        }
-      }
-    );
-  }
-
-  function onUserNameInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setUserName(e.target.value);
-  }
-
-  function onPasswordTextInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setPasswordText(e.target.value)
+    const result = await submitInput();
+    
+    switch (result.kind) {
+      case "success":
+        navigate("/home");
+        break;
+      case "alreadyAuthenticated":
+        setFailureMessage("Already logged in");
+        break;
+      case "error":
+        setFailureMessage(result.message);
+        break;
+    }
   }
 
   return (
@@ -64,7 +43,9 @@ export default function AuthPage() {
             <input
               className='auth-username'
               type='text'
-              onChange={onUserNameInputChange} />
+              onChange={e => {
+                setInputUserName(e.target.value);
+              }} />
           </label>
           <label>
             Password:
@@ -72,7 +53,9 @@ export default function AuthPage() {
             <input
               className='auth-password'
               type='password'
-              onChange={onPasswordTextInputChange} />
+              onChange={e => {
+                setInputPasswordText(e.target.value);
+              }} />
           </label>
           {failureMessage === undefined
             ? (

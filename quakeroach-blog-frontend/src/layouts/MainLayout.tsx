@@ -2,13 +2,18 @@ import { Link, Outlet } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorDisplay from "../components/ErrorDisplay";
 import './MainLayout.css';
+import { useAuth } from "../lib/backend/detail/useAuth";
 
 export default function MainLayout() {
-  const logInButton = (
-    <Link className='box button main-layout-navbar-button-login' to='/auth'>
-      Log In
-    </Link>
-  );
+  const { getAuthInfo } = useAuth();
+
+  const logInButton = getAuthInfo().isAuthenticated
+    ? undefined
+    : (
+      <Link className='box button main-layout-navbar-button-login' to='/auth'>
+        Log In
+      </Link>
+    );
 
   return (
     <div className='main-layout'>

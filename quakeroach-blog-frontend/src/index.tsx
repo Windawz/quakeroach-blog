@@ -4,7 +4,6 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { routes } from './lib/routes';
-import { ApiStateProvider } from './lib/backend/detail/apiState';
 import { CookiesProvider } from 'react-cookie';
 
 const root = ReactDOM.createRoot(
@@ -14,9 +13,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <CookiesProvider>
-      <ApiStateProvider>
-        <RouterProvider router={createBrowserRouter(routes)} />
-      </ApiStateProvider>
+      <RouterProvider router={createBrowserRouter(routes)} />
     </CookiesProvider>
   </React.StrictMode>
 );

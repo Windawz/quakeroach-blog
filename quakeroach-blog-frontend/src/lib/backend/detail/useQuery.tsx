@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useApiState } from "./apiState";
 import { useNavigate } from "react-router-dom";
 import { apiCall } from "./apiCall";
+import assert from "assert";
+import { AppError } from "../../errorHandling";
 
 export function useQuery(params: QueryParams): QueryResult {
   const navigate = useNavigate();
-  const { tokenPair, setTokenPair } = useApiState();
+  const { apiState, setApiState } = useApiState();
   const [result, setResult] = useState<QueryResult>({ kind: "pending" });
 
   const data = params.method === "post" ? params.data : undefined;
@@ -20,7 +22,7 @@ export function useQuery(params: QueryParams): QueryResult {
         url: params.url,
         params: params.params,
         data: data,
-        tokens: tokenPair,
+        tokens: apiState?.tokens,
       });
 
       if (!active) {
@@ -28,10 +30,17 @@ export function useQuery(params: QueryParams): QueryResult {
       }
 
       if (response.kind === "tokensExpired") {
-        navigate("auth");
+        navigate("/auth");
       } else {
         if (response.refreshedTokens !== undefined) {
-          setTokenPair(response.refreshedTokens);
+          assert(apiState !== undefined, new AppError({
+            message: "Cannot refresh tokens mid-query because api state is undefined",
+          }));
+
+          setApiState({
+            userName: apiState!.userName,
+            tokens: response.refreshedTokens,
+          });
         }
 
         switch (response.kind) {
@@ -62,10 +71,10 @@ export function useQuery(params: QueryParams): QueryResult {
     params.method,
     params.url,
     params.params,
-    tokenPair,
     data,
     navigate,
-    setTokenPair,
+    apiState,
+    setApiState,
   ]);
 
   return result;

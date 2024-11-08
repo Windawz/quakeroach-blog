@@ -3,18 +3,13 @@ import { useApiState } from "./apiState";
 import { apiCall } from "./apiCall";
 
 export function useAuth(): AuthController {
-  const {
-    tokenPair,
-    setTokenPair,
-    userName,
-    setUserName,
-  } = useApiState();
+  const { apiState, setApiState } = useApiState();
 
   const [inputUserName, setInputUserName] = useState<string>("");
   const [inputPasswordText, setInputPasswordText] = useState<string>("");
 
   const isAuthenticated = (): boolean => {
-    return tokenPair !== undefined && userName !== undefined;
+    return apiState !== undefined;
   }
 
   const submitInput = async (): Promise<AuthSubmitResult> => {
@@ -32,8 +27,10 @@ export function useAuth(): AuthController {
 
     switch (response.kind) {
       case "success":
-        setTokenPair(response.tokens);
-        setUserName(inputUserName);
+        setApiState({
+          userName: inputUserName,
+          tokens: response.tokens,
+        });
         return {
           kind: "success",
         };
@@ -50,7 +47,7 @@ export function useAuth(): AuthController {
     return isAuthenticated()
       ? {
         isAuthenticated: true,
-        userName: userName!,
+        userName: apiState!.userName,
       }
       : {
         isAuthenticated: false,
