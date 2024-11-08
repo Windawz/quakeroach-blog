@@ -1,7 +1,7 @@
 import './AuthPage.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../lib/backend/detail/useAuth';
+import { useAuth } from '../lib/backend/useAuth';
 
 export default function AuthPage() {
   const {

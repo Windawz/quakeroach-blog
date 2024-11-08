@@ -3,7 +3,7 @@ import { useApiState } from "./apiState";
 import { useNavigate } from "react-router-dom";
 import { apiCall } from "./apiCall";
 import assert from "assert";
-import { AppError } from "../../errorHandling";
+import { AppError } from "../errorHandling";
 
 export function useQuery(params: QueryParams): QueryResult {
   const navigate = useNavigate();

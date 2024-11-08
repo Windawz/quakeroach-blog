@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
-import { envars } from "../../envars";
+import { envars } from "../envars";
 import assert from "assert";
 
 export type TokenPair = {

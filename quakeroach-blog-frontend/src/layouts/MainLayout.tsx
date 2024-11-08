@@ -2,7 +2,7 @@ import { Link, Outlet } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorDisplay from "../components/ErrorDisplay";
 import './MainLayout.css';
-import { useAuth } from "../lib/backend/detail/useAuth";
+import { useAuth } from "../lib/backend/useAuth";
 
 export default function MainLayout() {
   const { getAuthInfo } = useAuth();
