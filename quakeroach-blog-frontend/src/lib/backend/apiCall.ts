@@ -3,6 +3,8 @@ import { envars } from "../envars";
 import assert from "assert";
 import { TokenPair } from "./TokenPair";
 import { ErrorDetails } from "./ErrorDetails";
+import { isPlainObject } from "../isPlainObject";
+import { isMoment } from "moment";
 
 export type ApiRequest = ApiAuthenticateRequest | ApiFetchRequest;
 
@@ -119,8 +121,8 @@ async function apiCallFetch(request: ApiFetchRequest): Promise<ApiFetchResponse>
     return await axiosInstance.request({
       url: request.url,
       method: request.method,
-      params: request.params,
-      data: request.method !== "get" ? request.data : undefined,
+      params: mapRequestInput(request.params),
+      data: request.method !== "get" ? mapRequestInput(request.data) : undefined,
       headers:
         tokens === undefined
           ? undefined
@@ -295,4 +297,26 @@ function errorDetailsFromAxiosError(error: AxiosError): ErrorDetails {
     message: "Unknown error",
     status,
   };
+}
+
+function mapRequestInput(input: any | undefined): any | undefined {
+  if (input === undefined) {
+    return undefined;
+  }
+
+  if (isMoment(input)) {
+    return input.format();
+  }
+
+  if (Array.isArray(input)) {
+    return input.map(x => mapRequestInput(x));
+  }
+
+  if (isPlainObject(input)) {
+    return Object.fromEntries(
+      Object.entries(input).map(([k, v]) => [k, mapRequestInput(v)]),
+    );
+  }
+
+  return input;
 }

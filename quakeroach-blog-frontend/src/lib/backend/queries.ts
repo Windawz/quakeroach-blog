@@ -16,7 +16,7 @@ export function useBlogPosts({ maxCount, minPublishDate }: BlogPostQueryParams):
     url: "blogPosts",
     params: {
       maxCount,
-      minPublishDate: minPublishDate.format(),
+      minPublishDate,
     },
     resultDataTransform: (value) => (value as any[]).map((x): BlogPost => ({
       id: x.id,
