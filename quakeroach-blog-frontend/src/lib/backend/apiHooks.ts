@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useApiState } from "./apiState";
-import { useNavigate } from "react-router-dom";
-import { apiCall } from "./apiCall";
-import { updateApiStateOrAskForAuthOnExpiredTokens } from "./handleApiState";
+import { ApiState, useApiState } from "./apiState";
+import { NavigateFunction, useNavigate } from "react-router-dom";
+import { apiCall, ApiFetchResponse } from "./apiCall";
 import { ErrorDetails } from "./ErrorDetails";
+import assert from "assert";
+import { AppError } from "../errorHandling";
 
 export function useCommand<T>(params: UseCommandBodyParams<T>): BodyCommandController<T>;
 export function useCommand<T>(params: UseCommandBodylessParams<T>): BodylessCommandController<T>;
@@ -197,4 +198,29 @@ interface UseQueryParamsBase<T> extends ApiHookParamsBase<T> {
 interface ApiHookParamsBase<T> {
   url: string;
   resultDataTransform?: (value: any) => T;
+}
+
+export function updateApiStateOrAskForAuthOnExpiredTokens(
+  response: ApiFetchResponse,
+  navigate: NavigateFunction,
+  apiState: ApiState | undefined,
+  setApiState: (value: ApiState | undefined) => void,
+  onTokensNotExpired: (response: Exclude<ApiFetchResponse, { kind: "tokensExpired" }>) => void,
+) {
+  if (response.kind === "tokensExpired") {
+    navigate("/auth");
+  } else {
+    if (response.refreshedTokens !== undefined) {
+      assert(apiState !== undefined, new AppError({
+        message: "Cannot refresh tokens mid-query because api state is undefined",
+      }));
+
+      setApiState({
+        userName: apiState!.userName,
+        tokens: response.refreshedTokens,
+      });
+    }
+
+    onTokensNotExpired(response);
+  }
 }

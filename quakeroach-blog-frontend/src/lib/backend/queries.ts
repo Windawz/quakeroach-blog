@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { QueryResult, useQuery } from "./useQuery";
+import { QueryResult, useQuery } from "./apiHooks";
 import moment from "moment";
 
 export interface BlogPost {
