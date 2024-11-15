@@ -13,7 +13,7 @@ export interface ApiAuthenticateRequest {
   passwordText: string;
 }
 
-export interface ApiFetchGetRequest {
+export interface ApiFetchBodylessRequest {
   intent: "fetch";
   method: "get";
   url: string;
@@ -21,9 +21,9 @@ export interface ApiFetchGetRequest {
   params?: any;
 }
 
-export interface ApiFetchPostRequest {
+export interface ApiFetchBodyRequest {
   intent: "fetch";
-  method: "post";
+  method: "post" | "put" | "delete";
   url: string;
   tokens?: TokenPair;
   params?: any;
@@ -46,7 +46,6 @@ export interface ApiAuthenticateErrorResponse {
 export interface ApiFetchSuccessResponse {
   intent: "fetch";
   kind: "success";
-  headers: ApiFetchSuccessResponseHeaders;
   refreshedTokens?: TokenPair;
   data: any;
 }
@@ -64,15 +63,11 @@ export interface ApiFetchErrorResponse {
   message: string;
 }
 
-export type ApiFetchRequest = ApiFetchGetRequest | ApiFetchPostRequest;
+export type ApiFetchRequest = ApiFetchBodylessRequest | ApiFetchBodyRequest;
 export type ApiAuthenticateResponse = ApiAuthenticateSuccessResponse | ApiAuthenticateErrorResponse;
 export type ApiFetchResponse = ApiFetchSuccessResponse | ApiFetchTokensExpiredResponse | ApiFetchErrorResponse;
 export type ApiRequest = ApiAuthenticateRequest | ApiFetchRequest;
 export type ApiResponse = ApiAuthenticateResponse | ApiFetchResponse;
-
-export interface ApiFetchSuccessResponseHeaders {
-  location?: string;
-}
 
 export async function apiCall(request: ApiAuthenticateRequest): Promise<ApiAuthenticateResponse>;
 export async function apiCall(request: ApiFetchRequest): Promise<ApiFetchResponse>;
@@ -197,9 +192,6 @@ async function apiCallFetch(request: ApiFetchRequest): Promise<ApiFetchResponse>
   return {
     intent: "fetch",
     kind: "success",
-    headers: {
-      location: axiosResponse.headers["Location"],
-    },
     data: axiosResponse.data,
     refreshedTokens,
   };

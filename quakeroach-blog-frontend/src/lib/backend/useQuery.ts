@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { apiCall } from "./apiCall";
 import { updateApiStateOrAskForAuthOnExpiredTokens } from "./handleApiState";
 
-export function useQuery<TResponseData>(params: QueryParams<TResponseData>): QueryResult<TResponseData> {
+export function useQuery<T>(params: ApiHookParams<T>): ApiHookResult<T> {
   const navigate = useNavigate();
   const { apiState, setApiState } = useApiState();
-  const [result, setResult] = useState<QueryResult<TResponseData>>({ kind: "pending" });
+  const [result, setResult] = useState<ApiHookResult<T>>({ kind: "pending" });
 
   const data = params.method === "post" ? params.data : undefined;
 
@@ -31,13 +31,12 @@ export function useQuery<TResponseData>(params: QueryParams<TResponseData>): Que
       updateApiStateOrAskForAuthOnExpiredTokens(response, navigate, apiState, setApiState, response => {
         switch (response.kind) {
           case "success":
-            const finalData = params.responseDataSelector !== undefined
-              ? params.responseDataSelector(response.data)
+            const finalData = params.resultDataTransform !== undefined
+              ? params.resultDataTransform(response.data)
               : response.data;
 
             setResult({
               kind: "success",
-              headers: response.headers,
               data: finalData,
             });
             break;
@@ -63,41 +62,36 @@ export function useQuery<TResponseData>(params: QueryParams<TResponseData>): Que
   return result;
 }
 
-export type QueryResult<TResponseData> = QuerySuccessResult<TResponseData> | QueryPendingResult | QueryErrorResult;
+export type ApiHookResult<T> = ApiHookSuccessResult<T> | ApiHookPendingResult | ApiHookErrorResult;
 
-export interface QuerySuccessResult<TResponseData> {
+export interface ApiHookSuccessResult<T> {
   kind: "success";
-  headers: QuerySuccessResultHeaders;
-  data: TResponseData;
+  data: T;
 }
 
-export interface QueryPendingResult {
+export interface ApiHookPendingResult {
   kind: "pending";
 }
 
-export interface QueryErrorResult {
+export interface ApiHookErrorResult {
   kind: "error";
   message: string;
   status: number;
 }
 
-export interface QuerySuccessResultHeaders {
-  location?: string;
-}
+export type ApiHookParams<T> = ApiHookBodylessParams<T> | ApiHookBodyParams<T>;
 
-export type QueryParams<TResponseData> = GetQueryParams<TResponseData> | PostQueryParams<TResponseData>;
-
-export interface GetQueryParams<TResponseData> extends BaseQueryParams<TResponseData> {
+export interface ApiHookBodylessParams<T> extends ApiHookParamsBase<T> {
   method: "get";
 }
 
-export interface PostQueryParams<TResponseData> extends BaseQueryParams<TResponseData> {
-  method: "post";
+export interface ApiHookBodyParams<T> extends ApiHookParamsBase<T> {
+  method: "post" | "put" | "delete";
   data?: any;
 }
 
-export interface BaseQueryParams<TResponseData> {
+interface ApiHookParamsBase<T> {
   url: string;
   params?: any;
-  responseDataSelector?: (value: any) => TResponseData;
+  resultDataTransform?: (value: any) => T;
 }
