@@ -13,7 +13,7 @@ public interface IBlogPostsService
     
     Task<BlogPostOutput> GetAsync(long id);
 
-    Task<long> CreateAsync(string authorName, BlogPostCreationInput input);
+    Task<BlogPostOutput> CreateAsync(string authorName, BlogPostCreationInput input);
 }
 
 public record BlogPostOutput(
@@ -74,7 +74,7 @@ public class BlogPostsService : IBlogPostsService
             Content: blogPost.Content);
     }
 
-    public async Task<long> CreateAsync(string authorName, BlogPostCreationInput input)
+    public async Task<BlogPostOutput> CreateAsync(string authorName, BlogPostCreationInput input)
     {
         var publishDate = DateTime.UtcNow;
         var authorUser = await _dbContext.Users
@@ -94,6 +94,11 @@ public class BlogPostsService : IBlogPostsService
 
         await _dbContext.SaveChangesAsync();
 
-        return blogPost.Id;
+        return new BlogPostOutput(
+            Id: blogPost.Id,
+            Title: blogPost.Title,
+            AuthorName: blogPost.AuthorUser.Name,
+            PublishDate: blogPost.PublishDate,
+            Content: blogPost.Content);
     }
 }

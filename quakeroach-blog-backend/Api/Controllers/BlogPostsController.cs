@@ -42,8 +42,8 @@ public class BlogPostsController : ControllerBase
     {
         string authorName = _httpContextView.UserName;
 
-        long id = await _blogPostsService.CreateAsync(authorName, input);
+        var result = await _blogPostsService.CreateAsync(authorName, input);
 
-        return CreatedAtAction(nameof(Get), new { id }, null);
+        return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
     }
 }
