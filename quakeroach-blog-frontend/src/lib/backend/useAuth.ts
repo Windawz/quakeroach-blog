@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useApiState } from "./apiState";
 import { apiCall } from "./apiCall";
+import { ErrorDetails } from "./ErrorDetails";
 
 export function useAuth(): AuthController {
   const { apiState, setApiState } = useApiState();
@@ -94,8 +95,6 @@ export interface AlreadyAuthenticatedAuthSubmitResult {
   kind: "alreadyAuthenticated";
 }
 
-export interface ErrorAuthSubmitResult {
+export interface ErrorAuthSubmitResult extends ErrorDetails {
   kind: "error";
-  message: string;
-  status: number;
 }
