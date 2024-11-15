@@ -77,7 +77,7 @@ async function apiCallAuthenticate(request: ApiAuthenticateRequest): Promise<Api
   const { userName, passwordText } = request;
 
   const response = await axiosInstance
-    .post("auth/login", {
+    .post("/auth/login", {
       userName,
       passwordText,
     })
