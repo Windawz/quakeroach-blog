@@ -4,63 +4,71 @@ import assert from "assert";
 import { TokenPair } from "./TokenPair";
 import { ErrorDetails, errorDetailsFromAxiosError } from "./ErrorDetails";
 
+export type ApiRequest = ApiAuthenticateRequest | ApiFetchRequest;
+
 export interface ApiAuthenticateRequest {
   intent: "authenticate";
   userName: string;
   passwordText: string;
 }
 
-export interface ApiFetchBodylessRequest {
-  intent: "fetch";
-  method: "get";
-  url: string;
-  tokens?: TokenPair;
-  params?: any;
-}
+export type ApiFetchRequest = ApiFetchBodyRequest | ApiFetchBodylessRequest;
 
-export interface ApiFetchBodyRequest {
-  intent: "fetch";
+export interface ApiFetchBodyRequest extends ApiFetchRequestBase {
   method: "post" | "put" | "delete";
-  url: string;
-  tokens?: TokenPair;
-  params?: any;
   data?: any;
 }
 
-export interface ApiAuthenticateSuccessResponse {
-  intent: "authenticate";
+export interface ApiFetchBodylessRequest extends ApiFetchRequestBase {
+  method: "get",
+}
+
+interface ApiFetchRequestBase {
+  intent: "fetch";
+  url: string;
+  tokens?: TokenPair;
+  params?: any;
+}
+
+export type ApiResponse = ApiAuthenticateResponse | ApiFetchResponse;
+
+export type ApiAuthenticateResponse = ApiAuthenticateSuccessResponse | ApiAuthenticateErrorResponse;
+
+export interface ApiAuthenticateSuccessResponse extends ApiAuthenticateResponseBase {
   kind: "success";
   tokens: TokenPair;
 }
 
-export interface ApiAuthenticateErrorResponse extends ErrorDetails {
-  intent: "authenticate";
+export interface ApiAuthenticateErrorResponse extends ApiAuthenticateResponseBase, ErrorDetails {
   kind: "error";
 }
 
-export interface ApiFetchSuccessResponse {
-  intent: "fetch";
-  kind: "success";
-  refreshedTokens?: TokenPair;
-  data: any;
+interface ApiAuthenticateResponseBase {
+  intent: "authenticate";
 }
 
-export interface ApiFetchTokensExpiredResponse {
-  intent: "fetch";
+export type ApiFetchResponse = ApiFetchSuccessResponse | ApiFetchTokensExpiredResponse | ApiFetchErrorResponse;
+
+export interface ApiFetchSuccessResponse extends ApiFetchTokensResponseBase {
+  kind: "success";
+  data?: any;
+}
+
+export interface ApiFetchTokensExpiredResponse extends ApiFetchResponseBase {
   kind: "tokensExpired";
 }
 
-export interface ApiFetchErrorResponse extends ErrorDetails {
-  intent: "fetch";
+export interface ApiFetchErrorResponse extends ApiFetchTokensResponseBase, ErrorDetails {
   kind: "error";
+}
+
+interface ApiFetchTokensResponseBase extends ApiFetchResponseBase {
   refreshedTokens?: TokenPair;
 }
 
-export type ApiFetchRequest = ApiFetchBodylessRequest | ApiFetchBodyRequest;
-export type ApiAuthenticateResponse = ApiAuthenticateSuccessResponse | ApiAuthenticateErrorResponse;
-export type ApiFetchResponse = ApiFetchSuccessResponse | ApiFetchTokensExpiredResponse | ApiFetchErrorResponse;
-export type ApiRequest = ApiAuthenticateRequest | ApiFetchRequest;
-export type ApiResponse = ApiAuthenticateResponse | ApiFetchResponse;
+interface ApiFetchResponseBase {
+  intent: "fetch";
+}
 
 export async function apiCall(request: ApiAuthenticateRequest): Promise<ApiAuthenticateResponse>;
 export async function apiCall(request: ApiFetchRequest): Promise<ApiFetchResponse>;
