@@ -10,7 +10,7 @@ export function useQuery<T>(params: ApiHookParams<T>): ApiHookResult<T> {
   const { apiState, setApiState } = useApiState();
   const [result, setResult] = useState<ApiHookResult<T>>({ kind: "pending" });
 
-  const data = params.method === "post" ? params.data : undefined;
+  const data = params.method !== "get" ? params.data : undefined;
 
   useEffect(() => {
     let active = true;
