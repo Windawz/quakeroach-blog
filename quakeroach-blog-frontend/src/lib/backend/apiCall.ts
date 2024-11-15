@@ -5,6 +5,7 @@ import { TokenPair } from "./TokenPair";
 import { ErrorDetails } from "./ErrorDetails";
 import { isPlainObject } from "../isPlainObject";
 import { isMoment } from "moment";
+import moment from "moment";
 
 export type ApiRequest = ApiAuthenticateRequest | ApiFetchRequest;
 
@@ -194,7 +195,7 @@ async function apiCallFetch(request: ApiFetchRequest): Promise<ApiFetchResponse>
     intent: "fetch",
     kind: "success",
     location: getLocation(axiosResponse),
-    data: axiosResponse.data,
+    data: mapResponseOutput(axiosResponse.data),
     refreshedTokens,
   };
 }
@@ -319,4 +320,29 @@ function mapRequestInput(input: any | undefined): any | undefined {
   }
 
   return input;
+}
+
+function mapResponseOutput(output: any | undefined): any | undefined {
+  if (output === undefined) {
+    return undefined;
+  }
+
+  if (typeof output === "string") {
+    const date = moment(output);
+    if (date.isValid()) {
+      return date;
+    }
+  }
+
+  if (Array.isArray(output)) {
+    return output.map(x => mapResponseOutput(x));
+  }
+
+  if (isPlainObject(output)) {
+    return Object.fromEntries(
+      Object.entries(output).map(([k, v]) => [k, mapResponseOutput(v)]),
+    );
+  }
+
+  return output;
 }
