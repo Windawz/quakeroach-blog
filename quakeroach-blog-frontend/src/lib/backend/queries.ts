@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { ApiHookResult, useQuery } from "./useQuery";
+import { QueryResult, useQuery } from "./useQuery";
 import moment from "moment";
 
 export interface BlogPost {
@@ -10,7 +10,7 @@ export interface BlogPost {
   content: string;
 }
 
-export function useBlogPosts({ maxCount, minPublishDate }: BlogPostQueryParams): ApiHookResult<BlogPost[]> {
+export function useBlogPosts({ maxCount, minPublishDate }: BlogPostQueryParams): QueryResult<BlogPost[]> {
   const result = useQuery<BlogPost[]>({
     method: "get",
     url: "blogPosts",
