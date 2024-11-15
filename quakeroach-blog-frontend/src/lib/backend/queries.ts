@@ -1,6 +1,5 @@
 import { Moment } from "moment";
-import { QueryResult, useQuery } from "./apiHooks";
-import moment from "moment";
+import { BodyCommandController, QueryResult, useCommand, useQuery } from "./apiHooks";
 
 export interface BlogPost {
   id: number;
@@ -8,6 +7,11 @@ export interface BlogPost {
   authorName: string;
   publishDate: Moment;
   content: string;
+}
+
+export interface BlogPostQueryParams {
+  maxCount: number;
+  minPublishDate: Moment;
 }
 
 export function useBlogPosts({ maxCount, minPublishDate }: BlogPostQueryParams): QueryResult<BlogPost[]> {
@@ -18,19 +22,19 @@ export function useBlogPosts({ maxCount, minPublishDate }: BlogPostQueryParams):
       maxCount,
       minPublishDate,
     },
-    resultDataTransform: (value) => (value as any[]).map((x): BlogPost => ({
-      id: x.id,
-      title: x.title,
-      authorName: x.authorName,
-      publishDate: moment(x.publishDate),
-      content: x.content,
-    })),
   });
 
   return result;
 }
 
-export interface BlogPostQueryParams {
-  maxCount: number;
-  minPublishDate: Moment;
+export interface UseCreateBlogPostParams {
+  title: string;
+  content: string;
+}
+
+export function useCreateBlogPost({ title, content }: UseCreateBlogPostParams): BodyCommandController<BlogPost> {
+  return useCommand({
+    method: "post",
+    url: "/blogPosts",
+  });
 }
