@@ -1,4 +1,4 @@
-import { TokenPair } from "./apiCall";
+import { TokenPair } from "./TokenPair";
 import { useCookies } from "react-cookie";
 
 export interface ApiStateController {

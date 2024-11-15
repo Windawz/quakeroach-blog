@@ -1,11 +1,8 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { envars } from "../envars";
 import assert from "assert";
-
-export type TokenPair = {
-  accessToken: string;
-  refreshToken: string;
-};
+import { TokenPair } from "./TokenPair";
+import { ErrorDetails, errorDetailsFromAxiosError } from "./ErrorDetails";
 
 export interface ApiAuthenticateRequest {
   intent: "authenticate";
@@ -36,11 +33,9 @@ export interface ApiAuthenticateSuccessResponse {
   tokens: TokenPair;
 }
 
-export interface ApiAuthenticateErrorResponse {
+export interface ApiAuthenticateErrorResponse extends ErrorDetails {
   intent: "authenticate";
   kind: "error";
-  status: number;
-  message: string;
 }
 
 export interface ApiFetchSuccessResponse {
@@ -55,12 +50,10 @@ export interface ApiFetchTokensExpiredResponse {
   kind: "tokensExpired";
 }
 
-export interface ApiFetchErrorResponse {
+export interface ApiFetchErrorResponse extends ErrorDetails {
   intent: "fetch";
   kind: "error";
   refreshedTokens?: TokenPair;
-  status: number;
-  message: string;
 }
 
 export type ApiFetchRequest = ApiFetchBodylessRequest | ApiFetchBodyRequest;
@@ -103,8 +96,7 @@ async function apiCallAuthenticate(request: ApiAuthenticateRequest): Promise<Api
       const result: ApiAuthenticateErrorResponse = {
         intent: "authenticate",
         kind: "error",
-        message: (error.response!.data as any).errorMessage,
-        status: error.status!,
+        ...errorDetailsFromAxiosError(error),
       };
 
       return result;
@@ -158,9 +150,8 @@ async function apiCallFetch(request: ApiFetchRequest): Promise<ApiFetchResponse>
             return {
               intent: "fetch",
               kind: "error",
-              message: (error.response!.data as any).errorMessage,
-              status: error.status!,
               refreshedTokens: refreshedTokens,
+              ...errorDetailsFromAxiosError(error),
             };
           }
           break;
@@ -181,8 +172,7 @@ async function apiCallFetch(request: ApiFetchRequest): Promise<ApiFetchResponse>
       return {
         intent: "fetch",
         kind: "error",
-        message: (error.response!.data as any).errorMessage,
-        status: error.status!,
+        ...errorDetailsFromAxiosError(error),
       };
     }
   }
@@ -197,21 +187,50 @@ async function apiCallFetch(request: ApiFetchRequest): Promise<ApiFetchResponse>
   };
 }
 
-type ApiRefreshResult = {
+type ApiRefreshResult = ApiRefreshSuccessResult | ApiRefreshExpiredResult | ApiRefreshErrorResult;
+
+interface ApiRefreshSuccessResult {
   kind: "success";
   tokens: TokenPair;
-} | {
+}
+
+interface ApiRefreshExpiredResult {
   kind: "expired";
-} | {
+}
+
+interface ApiRefreshErrorResult extends ErrorDetails {
   kind: "error";
-  message: string;
-  status: number;
-};
+}
 
 async function apiRefresh(refreshToken: string): Promise<ApiRefreshResult> {
-  return await axiosInstance.post("auth/refresh", {
-    refreshToken,
-  }).then()
+  let response: AxiosResponse;
+  
+  try {
+    response = await axiosInstance.post("/auth/refresh", {
+      refreshToken,
+    });
+  } catch (e) {
+    const error = e as AxiosError;
+
+    if (error.status === 400) {
+      return {
+        kind: "expired",
+      };
+    }
+
+    return {
+      kind: "error",
+      ...errorDetailsFromAxiosError(error),
+    };
+  }
+
+  return {
+    kind: "success",
+    tokens: {
+      accessToken: response.data.accessToken,
+      refreshToken: response.data.refreshToken,
+    },
+  };
 }
 
 const axiosInstance = axios.create({

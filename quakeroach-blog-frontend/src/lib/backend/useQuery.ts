@@ -3,6 +3,7 @@ import { useApiState } from "./apiState";
 import { useNavigate } from "react-router-dom";
 import { apiCall } from "./apiCall";
 import { updateApiStateOrAskForAuthOnExpiredTokens } from "./handleApiState";
+import { ErrorDetails } from "./ErrorDetails";
 
 export function useQuery<T>(params: ApiHookParams<T>): ApiHookResult<T> {
   const navigate = useNavigate();
@@ -73,10 +74,8 @@ export interface ApiHookPendingResult {
   kind: "pending";
 }
 
-export interface ApiHookErrorResult {
+export interface ApiHookErrorResult extends ErrorDetails {
   kind: "error";
-  message: string;
-  status: number;
 }
 
 export type ApiHookParams<T> = ApiHookBodylessParams<T> | ApiHookBodyParams<T>;
