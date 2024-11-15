@@ -27,12 +27,12 @@ export function useBlogPosts({ maxCount, minPublishDate }: BlogPostQueryParams):
   return result;
 }
 
-export interface UseCreateBlogPostParams {
+export interface ExecuteCreateBlogPostParams {
   title: string;
   content: string;
 }
 
-export function useCreateBlogPost({ title, content }: UseCreateBlogPostParams): BodyCommandController<BlogPost> {
+export function useCreateBlogPost(): BodyCommandController<BlogPost, undefined, ExecuteCreateBlogPostParams> {
   return useCommand({
     method: "post",
     url: "/blogPosts",

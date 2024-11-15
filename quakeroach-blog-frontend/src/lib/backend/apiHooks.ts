@@ -6,21 +6,29 @@ import { ErrorDetails } from "./ErrorDetails";
 import assert from "assert";
 import { AppError } from "../errorHandling";
 
-export function useCommand<T>(params: UseCommandBodyParams<T>): BodyCommandController<T>;
-export function useCommand<T>(params: UseCommandBodylessParams<T>): BodylessCommandController<T>;
-export function useCommand<T>(params: UseCommandParams<T>): CommandController<T> {
+export function useCommand<TResultData, TExecuteParams, TExecuteData>(
+  params: UseCommandBodyParams<TResultData>
+): BodyCommandController<TResultData, TExecuteParams, TExecuteData>;
+
+export function useCommand<TResultData, TExecuteParams>(
+  params: UseCommandBodylessParams<TResultData>
+): BodylessCommandController<TResultData, TExecuteParams>;
+
+export function useCommand<TResultData, TExecuteParams, TExecuteData>(
+  params: UseCommandParams<TResultData>
+): CommandController<TResultData, TExecuteParams, TExecuteData> {
   const navigate = useNavigate();
   const { apiState, setApiState } = useApiState();
-  const [result, setResult] = useState<CommandResult<T>>({ kind: "dormant" });
+  const [result, setResult] = useState<CommandResult<TResultData>>({ kind: "dormant" });
 
-  const execute = (executeParams: BodyExecuteParams | BodylessExecuteParams) => {
+  const execute = (executeParams: BodyExecuteParams<TExecuteParams, TExecuteData> | BodylessExecuteParams<TExecuteParams>) => {
     if (result.kind === "pending") {
       return;
     }
 
     setResult({ kind: "pending" });
 
-    const data: any | undefined = (executeParams as BodyExecuteParams).data;
+    const data: TExecuteData | undefined = (executeParams as BodyExecuteParams<TExecuteParams, TExecuteData>).data;
 
     const performCall = async () => {
       const response = await apiCall({
@@ -124,48 +132,54 @@ export function useQuery<T>(params: UseQueryParams<T>): QueryResult<T> {
   return result;
 }
 
-export type UseCommandParams<T> = UseCommandBodyParams<T> | UseCommandBodylessParams<T>;
+export type UseCommandParams<TResultData> = UseCommandBodyParams<TResultData> | UseCommandBodylessParams<TResultData>;
 
-export interface UseCommandBodyParams<T> extends UseCommandParamsBase<T> {
+export interface UseCommandBodyParams<TResultData> extends UseCommandParamsBase<TResultData> {
   method: "post" | "put" | "delete";
 }
 
-export interface UseCommandBodylessParams<T> extends UseCommandParamsBase<T> {
+export interface UseCommandBodylessParams<TResultData> extends UseCommandParamsBase<TResultData> {
   method: "get";
 }
 
-interface UseCommandParamsBase<T> extends ApiHookParamsBase<T> {}
+interface UseCommandParamsBase<TResultData> extends ApiHookParamsBase<TResultData> {}
 
-export type CommandController<T> = BodyCommandController<T> | BodylessCommandController<T>;
+export type CommandController<TResultData, TExecuteParams, TExecuteData> = 
+  BodyCommandController<TResultData, TExecuteParams, TExecuteData>
+  | BodylessCommandController<TResultData, TExecuteParams>;
 
-export interface BodyCommandController<T> extends CommandControllerBase<T> {
-  readonly execute: (params: BodyExecuteParams) => void;
+export interface BodyCommandController<TResultData, TExecuteParams, TExecuteData> extends CommandControllerBase<TResultData> {
+  readonly execute: (params: BodyExecuteParams<TExecuteParams, TExecuteData>) => void;
 }
 
-export interface BodylessCommandController<T> extends CommandControllerBase<T> {
-  readonly execute: (params: BodylessExecuteParams) => void;
+export interface BodylessCommandController<TResultData, TExecuteParams> extends CommandControllerBase<TResultData> {
+  readonly execute: (params: BodylessExecuteParams<TExecuteParams>) => void;
 }
 
-interface CommandControllerBase<T> {
-  result: CommandResult<T>;
+interface CommandControllerBase<TResultData> {
+  result: CommandResult<TResultData>;
 }
 
-export interface BodyExecuteParams extends BodylessExecuteParams {
-  data?: any;
-}
+export type BodyExecuteParams<TExecuteParams, TExecuteData> = BodylessExecuteParams<TExecuteParams> & {
+  data: TExecuteData;
+};
 
-export interface BodylessExecuteParams {
-  params?: any;
-}
+export type BodylessExecuteParams<TExecuteParams> = TExecuteParams extends undefined
+  ? {
+    params?: undefined;
+  }
+  : {
+    params: TExecuteParams;
+  };
 
-export type CommandResult<T> = ApiHookSuccessResult<T> | ApiHookDormantResult | ApiHookPendingResult | ApiHookErrorResult;
+export type CommandResult<TResultData> = ApiHookSuccessResult<TResultData> | ApiHookDormantResult | ApiHookPendingResult | ApiHookErrorResult;
 
-export type QueryResult<T> = ApiHookSuccessResult<T> | ApiHookPendingResult | ApiHookErrorResult;
+export type QueryResult<TResultData> = ApiHookSuccessResult<TResultData> | ApiHookPendingResult | ApiHookErrorResult;
 
-export interface ApiHookSuccessResult<T> {
+export interface ApiHookSuccessResult<TResultData> {
   kind: "success";
   location?: string;
-  data: T;
+  data: TResultData;
 }
 
 export interface ApiHookDormantResult {
@@ -180,24 +194,24 @@ export interface ApiHookErrorResult extends ErrorDetails {
   kind: "error";
 }
 
-export type UseQueryParams<T> = UseQueryBodylessParams<T> | UseQueryBodyParams<T>;
+export type UseQueryParams<TResultData> = UseQueryBodylessParams<TResultData> | UseQueryBodyParams<TResultData>;
 
-export interface UseQueryBodylessParams<T> extends UseQueryParamsBase<T> {
+export interface UseQueryBodylessParams<TResultData> extends UseQueryParamsBase<TResultData> {
   method: "get";
 }
 
-export interface UseQueryBodyParams<T> extends UseQueryParamsBase<T> {
+export interface UseQueryBodyParams<TResultData> extends UseQueryParamsBase<TResultData> {
   method: "post" | "put" | "delete";
   data?: any;
 }
 
-interface UseQueryParamsBase<T> extends ApiHookParamsBase<T> {
+interface UseQueryParamsBase<TResultData> extends ApiHookParamsBase<TResultData> {
   params?: any;
 }
 
-interface ApiHookParamsBase<T> {
+interface ApiHookParamsBase<TResultData> {
   url: string;
-  resultDataTransform?: (value: any) => T;
+  resultDataTransform?: (value: any) => TResultData;
 }
 
 export function updateApiStateOrAskForAuthOnExpiredTokens(
