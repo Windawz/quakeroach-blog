@@ -111,7 +111,7 @@ async function apiCallFetch(request: ApiFetchRequest): Promise<ApiFetchResponse>
       url: request.url,
       method: request.method,
       params: request.params,
-      data: request.method === "post" ? request.data : undefined,
+      data: request.method !== "get" ? request.data : undefined,
       headers:
         tokens === undefined
           ? undefined
