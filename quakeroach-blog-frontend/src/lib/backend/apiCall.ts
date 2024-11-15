@@ -51,6 +51,7 @@ export type ApiFetchResponse = ApiFetchSuccessResponse | ApiFetchTokensExpiredRe
 
 export interface ApiFetchSuccessResponse extends ApiFetchTokensResponseBase {
   kind: "success";
+  location?: string;
   data?: any;
 }
 
@@ -190,6 +191,7 @@ async function apiCallFetch(request: ApiFetchRequest): Promise<ApiFetchResponse>
   return {
     intent: "fetch",
     kind: "success",
+    location: getLocation(axiosResponse),
     data: axiosResponse.data,
     refreshedTokens,
   };
@@ -244,6 +246,16 @@ async function apiRefresh(refreshToken: string): Promise<ApiRefreshResult> {
 const axiosInstance = axios.create({
   baseURL: envars.baseApiUrl,
 });
+
+function getLocation(response: AxiosResponse): string | undefined {
+  const location = response.headers["Location"];
+
+  if (location && typeof location === "string" && location.trim()) {
+    return location;
+  }
+
+  return undefined;
+}
 
 function errorDetailsFromAxiosError(error: AxiosError): ErrorDetails {
   const status = error.status!;

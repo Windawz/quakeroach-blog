@@ -38,6 +38,7 @@ export function useQuery<T>(params: ApiHookParams<T>): ApiHookResult<T> {
 
             setResult({
               kind: "success",
+              location: response.location,
               data: finalData,
             });
             break;
@@ -67,6 +68,7 @@ export type ApiHookResult<T> = ApiHookSuccessResult<T> | ApiHookPendingResult | 
 
 export interface ApiHookSuccessResult<T> {
   kind: "success";
+  location?: string;
   data: T;
 }
 
