@@ -234,6 +234,7 @@ export function updateApiStateOrAskForAuthOnExpiredTokens(
   onTokensNotExpired: (response: Exclude<ApiFetchResponse, { kind: "tokensExpired" }>) => void,
 ) {
   if (response.kind === "tokensExpired") {
+    setApiState(undefined);
     navigate("/auth");
   } else {
     if (response.refreshedTokens !== undefined) {
