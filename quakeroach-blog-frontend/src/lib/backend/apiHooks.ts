@@ -7,15 +7,15 @@ import assert from "assert";
 import { AppError } from "../errorHandling";
 
 export function useCommand<TResultData, TExecuteParams, TExecuteData>(
-  params: UseCommandBodyParams<TResultData>
+  params: UseCommandBodyParams<TResultData, TExecuteParams, TExecuteData>
 ): BodyCommandController<TResultData, TExecuteParams, TExecuteData>;
 
 export function useCommand<TResultData, TExecuteParams>(
-  params: UseCommandBodylessParams<TResultData>
+  params: UseCommandBodylessParams<TResultData, TExecuteParams>
 ): BodylessCommandController<TResultData, TExecuteParams>;
 
 export function useCommand<TResultData, TExecuteParams, TExecuteData>(
-  params: UseCommandParams<TResultData>
+  params: UseCommandParams<TResultData, TExecuteParams, TExecuteData>
 ): CommandController<TResultData, TExecuteParams, TExecuteData> {
   const navigate = useNavigate();
   const { apiState, setApiState } = useApiState();
@@ -30,13 +30,20 @@ export function useCommand<TResultData, TExecuteParams, TExecuteData>(
 
     const data: TExecuteData | undefined = (executeParams as BodyExecuteParams<TExecuteParams, TExecuteData>).data;
 
+    const executeParamsTransform = params.executeParamsTransform;
+    const executeDataTransform = (params as UseCommandBodyParams<TResultData, TExecuteParams, TExecuteData>).executeDataTransform;
+
     const performCall = async () => {
       const response = await apiCall({
         intent: "fetch",
         method: params.method,
         url: params.url,
-        params: executeParams.params,
-        data,
+        params: executeParamsTransform !== undefined && executeParams.params !== undefined
+          ? executeParamsTransform(executeParams.params)
+          : executeParams.params,
+        data: executeDataTransform !== undefined
+          ? executeDataTransform(data)
+          : data,
         tokens: apiState?.tokens,
       });
 
@@ -132,17 +139,22 @@ export function useQuery<T>(params: UseQueryParams<T>): QueryResult<T> {
   return result;
 }
 
-export type UseCommandParams<TResultData> = UseCommandBodyParams<TResultData> | UseCommandBodylessParams<TResultData>;
+export type UseCommandParams<TResultData, TExecuteParams, TExecuteData> =
+  UseCommandBodyParams<TResultData, TExecuteParams, TExecuteData>
+  | UseCommandBodylessParams<TResultData, TExecuteParams>;
 
-export interface UseCommandBodyParams<TResultData> extends UseCommandParamsBase<TResultData> {
+export interface UseCommandBodyParams<TResultData, TExecuteParams, TExecuteData> extends UseCommandParamsBase<TResultData, TExecuteParams> {
   method: "post" | "put" | "delete";
+  executeDataTransform?: (data: TExecuteData) => any;
 }
 
-export interface UseCommandBodylessParams<TResultData> extends UseCommandParamsBase<TResultData> {
+export interface UseCommandBodylessParams<TResultData, TExecuteParams> extends UseCommandParamsBase<TResultData, TExecuteParams> {
   method: "get";
 }
 
-interface UseCommandParamsBase<TResultData> extends ApiHookParamsBase<TResultData> {}
+interface UseCommandParamsBase<TResultData, TExecuteParams> extends ApiHookParamsBase<TResultData> {
+  executeParamsTransform?: (params: TExecuteParams) => any;
+}
 
 export type CommandController<TResultData, TExecuteParams, TExecuteData> = 
   BodyCommandController<TResultData, TExecuteParams, TExecuteData>
