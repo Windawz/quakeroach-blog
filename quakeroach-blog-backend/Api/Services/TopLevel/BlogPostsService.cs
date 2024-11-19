@@ -14,6 +14,8 @@ public interface IBlogPostsService
     Task<BlogPostOutput> GetAsync(long id);
 
     Task<BlogPostOutput> CreateAsync(string authorName, BlogPostCreationInput input);
+
+    Task<BlogPostDeletionResult> DeleteAsync(string userName, long id);
 }
 
 public record BlogPostOutput(
@@ -26,6 +28,13 @@ public record BlogPostOutput(
 public record BlogPostCreationInput(
     string Title,
     string Content);
+
+public enum BlogPostDeletionResult
+{
+    Success = 1,
+    NotFound,
+    NoPermission,
+}
 
 public class BlogPostsService : IBlogPostsService
 {
@@ -103,5 +112,28 @@ public class BlogPostsService : IBlogPostsService
             AuthorName: blogPost.AuthorUser.Name,
             PublishDate: blogPost.PublishDate,
             Content: blogPost.Content);
+    }
+
+    public async Task<BlogPostDeletionResult> DeleteAsync(string userName, long id)
+    {
+        var blogPost = await _dbContext.BlogPosts
+            .Include(x => x.AuthorUser)
+            .SingleOrDefaultAsync(x => x.Id == id);
+        
+        if (blogPost is null)
+        {
+            return BlogPostDeletionResult.NotFound;
+        }
+
+        if (blogPost.AuthorUser.Name != userName)
+        {
+            return BlogPostDeletionResult.NoPermission;
+        }
+
+        _dbContext.BlogPosts.Remove(blogPost);
+
+        await _dbContext.SaveChangesAsync();
+
+        return BlogPostDeletionResult.Success;
     }
 }

@@ -46,4 +46,21 @@ public class BlogPostsController : ControllerBase
 
         return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
     }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<ActionResult> Delete(long id)
+    {
+        string userName = _httpContextView.UserName;
+
+        var result = await _blogPostsService.DeleteAsync(userName, id);
+
+        return result switch
+        {
+            BlogPostDeletionResult.Success => Ok(),
+            BlogPostDeletionResult.NotFound => NotFound(),
+            BlogPostDeletionResult.NoPermission => Forbid(),
+            _ => throw new InvalidOperationException($"Unknown delete result {result}"),
+        };
+    }
 }

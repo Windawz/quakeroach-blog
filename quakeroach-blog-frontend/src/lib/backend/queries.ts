@@ -42,3 +42,10 @@ export function useCreateBlogPost(): BodyCommandController<BlogPost, undefined, 
     }),
   });
 }
+
+export function useDeleteBlogPost(): BodyCommandController<undefined, { id: number }, undefined> {
+  return useCommand({
+    method: "delete",
+    url: "/blogPosts",
+  });
+}

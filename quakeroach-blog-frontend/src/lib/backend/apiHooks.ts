@@ -41,7 +41,7 @@ export function useCommand<TResultData, TExecuteParams, TExecuteData>(
         params: executeParamsTransform !== undefined && executeParams.params !== undefined
           ? executeParamsTransform(executeParams.params)
           : executeParams.params,
-        data: executeDataTransform !== undefined
+        data: executeDataTransform !== undefined && data !== undefined
           ? executeDataTransform(data)
           : data,
         tokens: apiState?.tokens,
@@ -172,9 +172,13 @@ interface CommandControllerBase<TResultData> {
   result: CommandResult<TResultData>;
 }
 
-export type BodyExecuteParams<TExecuteParams, TExecuteData> = BodylessExecuteParams<TExecuteParams> & {
-  data: TExecuteData;
-};
+export type BodyExecuteParams<TExecuteParams, TExecuteData> = BodylessExecuteParams<TExecuteParams> & (TExecuteData extends undefined
+  ? {
+    data?: undefined;
+  }
+  : {
+    data: TExecuteData;
+  });
 
 export type BodylessExecuteParams<TExecuteParams> = TExecuteParams extends undefined
   ? {
