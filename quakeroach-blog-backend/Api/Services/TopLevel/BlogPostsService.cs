@@ -46,6 +46,7 @@ public class BlogPostsService : IBlogPostsService
         }
 
         var blogPosts = await _dbContext.BlogPosts
+            .Include(x => x.AuthorUser)
             .OrderByDescending(x => x.PublishDate)
             .Where(x => x.PublishDate >= minPublishDate)
             .Take(maxCount)
@@ -63,8 +64,10 @@ public class BlogPostsService : IBlogPostsService
 
     public async Task<BlogPostOutput> GetAsync(long id)
     {
-        var blogPost = await _dbContext.BlogPosts.FindAsync(id)
-            ?? throw new BlogPostNotFoundException(id);
+        var blogPost = await _dbContext.BlogPosts
+            .Include(x => x.AuthorUser)
+            .SingleOrDefaultAsync(x => x.Id == id)
+                ?? throw new BlogPostNotFoundException(id);
         
         return new BlogPostOutput(
             Id: blogPost.Id,
