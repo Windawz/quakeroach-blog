@@ -60,7 +60,9 @@ public class RefreshTokenOperator : IRefreshTokenOperator
 
         var tokenName = rawToken;
 
-        var token = await _dbContext.RefreshTokens.Where(x => x.Name == tokenName)
+        var token = await _dbContext.RefreshTokens
+            .Include(x => x.User)
+            .Where(x => x.Name == tokenName)
             .SingleOrDefaultAsync();
         
         if (token is null)
