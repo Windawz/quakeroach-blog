@@ -1,5 +1,5 @@
 import './HomePage.css'
-import BlogPost from '../components/BlogPost';
+import BlogPostView from '../components/BlogPostView';
 import moment from 'moment';
 import { useBlogPosts } from '../lib/backend/queries';
 import { AppError } from '../lib/errorHandling';
@@ -24,7 +24,7 @@ export default function HomePage() {
         );
       } else {
         contents = blogPosts.map(x => (
-          <BlogPost
+          <BlogPostView
             id={x.id}
             authorName={x.authorName}
             title={x.title}

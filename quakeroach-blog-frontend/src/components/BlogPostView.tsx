@@ -1,8 +1,8 @@
 import { Moment } from 'moment';
-import './BlogPost.css';
+import './styles/BlogPostView.css';
 import Container from './Container';
 
-interface BlogPostProps {
+interface BlogPostViewProps {
   id: number,
   title: string;
   authorName: string;
@@ -10,13 +10,13 @@ interface BlogPostProps {
   content: string;
 }
 
-export default function BlogPost({
+export default function BlogPostView({
   id,
   title,
   authorName,
   publishDate,
   content,
-} : BlogPostProps) {
+} : BlogPostViewProps) {
   return (
     <Container>
       <div className='blog-post-header'>
