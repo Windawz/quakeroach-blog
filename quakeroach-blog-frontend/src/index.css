@@ -33,13 +33,6 @@ body {
   scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
 }
 
-.separator {
-  border-style: solid;
-  border-width: 1px 0 0 0;
-  border-color: var(--box-border-color);
-  margin: 10px 0;
-}
-
 :not(.box) > .box,
 .box > * {
   margin: 4px;

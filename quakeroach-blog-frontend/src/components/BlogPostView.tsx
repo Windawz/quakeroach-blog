@@ -1,6 +1,7 @@
 import './styles/BlogPostView.css';
 import Container from './Container';
 import { BlogPost } from '../lib/data/BlogPost';
+import Separator from './Separator';
 
 interface BlogPostViewProps {
   blogPost: BlogPost;
@@ -24,7 +25,7 @@ export default function BlogPostView({
           published at {blogPost.publishDate.format()}
         </div>
       </div>
-      <div className='separator' />
+      <Separator />
       <div className='blog-post-content'>
         {blogPost.content}
       </div>
