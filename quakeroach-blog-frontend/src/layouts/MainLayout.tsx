@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorDisplay from "../components/ErrorDisplay";
-import './MainLayout.css';
+import './styles/MainLayout.css';
 import { useAuth } from "../lib/backend/useAuth";
 import { useEffect, useState } from "react";
 
