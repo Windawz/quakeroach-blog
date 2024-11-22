@@ -1,40 +1,32 @@
-import { Moment } from 'moment';
 import './styles/BlogPostView.css';
 import Container from './Container';
+import { BlogPost } from '../lib/data/BlogPost';
 
 interface BlogPostViewProps {
-  id: number,
-  title: string;
-  authorName: string;
-  publishDate: Moment;
-  content: string;
+  blogPost: BlogPost;
 }
 
 export default function BlogPostView({
-  id,
-  title,
-  authorName,
-  publishDate,
-  content,
+  blogPost,
 } : BlogPostViewProps) {
   return (
     <Container>
       <div className='blog-post-header'>
         <div className='blog-post-header-title'>
-          <a href={`/blogpost/${id}`}>
-            {title}
+          <a href={`/blogpost/${blogPost.id}`}>
+            {blogPost.title}
           </a>
         </div>
         <div className='blog-post-header-author'>
-          by {authorName}
+          by {blogPost.authorName}
         </div>
         <div className='blog-post-header-date'>
-          published at {publishDate.format()}
+          published at {blogPost.publishDate.format()}
         </div>
       </div>
       <div className='separator' />
       <div className='blog-post-content'>
-        {content}
+        {blogPost.content}
       </div>
     </Container>
   );

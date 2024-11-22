@@ -24,12 +24,7 @@ export default function HomePage() {
         );
       } else {
         contents = blogPosts.map(x => (
-          <BlogPostView
-            id={x.id}
-            authorName={x.authorName}
-            title={x.title}
-            publishDate={x.publishDate}
-            content={x.content} />
+          <BlogPostView blogPost={x} />
         ));
       }
       break;
