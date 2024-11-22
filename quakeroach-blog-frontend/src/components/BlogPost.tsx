@@ -1,5 +1,6 @@
 import { Moment } from 'moment';
 import './BlogPost.css';
+import Container from './Container';
 
 interface BlogPostProps {
   id: number,
@@ -17,7 +18,7 @@ export default function BlogPost({
   content,
 } : BlogPostProps) {
   return (
-    <div className='blog-post box'>
+    <Container>
       <div className='blog-post-header'>
         <div className='blog-post-header-title'>
           <a href={`/blogpost/${id}`}>
@@ -35,6 +36,6 @@ export default function BlogPost({
       <div className='blog-post-content'>
         {content}
       </div>
-    </div>
+    </Container>
   );
 }
