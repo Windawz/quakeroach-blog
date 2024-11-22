@@ -2,6 +2,8 @@ import './AuthPage.css';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/backend/useAuth';
+import Button from '../components/Button';
+import Container from '../components/Container';
 
 export default function AuthPage() {
   const {
@@ -33,10 +35,8 @@ export default function AuthPage() {
 
   return (
     <div className='auth-page'>
-      <div className='auth-container-outer'>
-        <form
-          className='box auth-container'
-          onSubmit={onSubmit}>
+      <form className="auth-container-outer" onSubmit={onSubmit}>
+        <Container className="auth-container">
           <label>
             Username:
             <br />
@@ -66,13 +66,11 @@ export default function AuthPage() {
                 {failureMessage}
               </div>
             )}
-          <button
-            className='box button'
-            type='submit'>
+          <Button kind="submit">
             Submit
-          </button>
-        </form>
-      </div>
+          </Button>
+        </Container>
+      </form>
     </div>
   );
 }

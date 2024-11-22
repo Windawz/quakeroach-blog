@@ -1,0 +1,19 @@
+.button {
+  display: inline-block;
+  padding: 0;
+}
+
+.button > a,
+.button > button {
+  color: var(--main-color);
+  text-decoration-line: none;
+}
+
+.button-content-wrapper {
+  margin: initial;
+  display: block;
+  padding: 8px;
+  background-color: rgba(0, 0, 0, 0);
+  border: 0;
+  cursor: pointer;
+}

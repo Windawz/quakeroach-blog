@@ -1,9 +1,10 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorDisplay from "../components/ErrorDisplay";
 import './styles/MainLayout.css';
 import { useAuth } from "../lib/backend/useAuth";
 import { useEffect, useState } from "react";
+import Button from "../components/Button";
 
 export default function MainLayout() {
   const { getAuthInfo } = useAuth();
@@ -17,24 +18,24 @@ export default function MainLayout() {
   const logInButton = getAuthInfo().isAuthenticated
     ? undefined
     : (
-      <Link className='box button main-layout-navbar-button-login' to='/auth'>
+      <Button className="main-layout-navbar-button-login" kind="link" to="/auth">
         Log In
-      </Link>
+      </Button>
     );
 
   return (
     <div className='main-layout'>
       <div className='main-layout-navbar'>
         <div className='main-layout-navbar-left'>
-          <Link className='box button main-layout-navbar-button-home' to='/home'>
+          <Button className="main-layout-navbar-button-home" kind="link" to="/home">
             Home
-          </Link>
+          </Button>
         </div>
         <div className='main-layout-navbar-right'>
           {logInButton}
-          <Link className='box button main-layout-navbar-button-write' to='/write'>
+          <Button className="main-layout-navbar-button-write" kind="link" to="/write">
             Write
-          </Link>
+          </Button>
         </div>
       </div>
       <ErrorBoundary

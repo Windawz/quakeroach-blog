@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useCreateBlogPost } from '../lib/backend/queries';
 import './WritePage.css';
+import Button from '../components/Button';
+import Container from '../components/Container';
 
 export default function WritePage() {
   const [title, setTitle] = useState<string>('');
@@ -19,49 +21,49 @@ export default function WritePage() {
 
   const submitButton = result.kind === "dormant"
     ? (
-      <button
-        className='box button'
-        type='submit'>
+      <Button kind="submit">
         Submit
-      </button>
+      </Button>
     )
     : undefined;
 
   return (
     <div className='write-page'>
-      <form className='box editor-container' method='post' onSubmit={(e) => {
-        e.preventDefault();
+      <Container>
+        <form className='editor-container' method='post' onSubmit={(e) => {
+          e.preventDefault();
 
-        execute({
-          data: {
-            title,
-            content,
-          }
-        });
-      }}>
-        <label>
-          Title:
-          <br />
-          <input
-            className='editor-title'
-            name='editor-title'
-            type='text'
-            onChange={(e) => {
-              setTitle(e.target.value);
-            }} />
-        </label>
-        <label>
-          Content:
-          <br />
-          <textarea
-            className='editor-content'
-            name='editor-content'
-            onChange={(e) => {
-              setContent(e.target.value);
-            }} />
-        </label>
-        {completionDisplay ?? submitButton}
-      </form>
+          execute({
+            data: {
+              title,
+              content,
+            }
+          });
+        }}>
+          <label>
+            Title:
+            <br />
+            <input
+              className='editor-title'
+              name='editor-title'
+              type='text'
+              onChange={(e) => {
+                setTitle(e.target.value);
+              }} />
+          </label>
+          <label>
+            Content:
+            <br />
+            <textarea
+              className='editor-content'
+              name='editor-content'
+              onChange={(e) => {
+                setContent(e.target.value);
+              }} />
+          </label>
+          {completionDisplay ?? submitButton}
+        </form>
+      </Container>
     </div>
   );
 }
