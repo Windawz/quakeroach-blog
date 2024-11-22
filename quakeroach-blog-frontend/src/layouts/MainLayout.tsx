@@ -1,11 +1,18 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorDisplay from "../components/ErrorDisplay";
 import './MainLayout.css';
 import { useAuth } from "../lib/backend/useAuth";
+import { useEffect, useState } from "react";
 
 export default function MainLayout() {
   const { getAuthInfo } = useAuth();
+  const location = useLocation();
+  const [shouldResetErrorBoundary, setShouldResetErrorBoundary] = useState(false);
+
+  useEffect(() => {
+    setShouldResetErrorBoundary(true);
+  }, [location.key]);
 
   const logInButton = getAuthInfo().isAuthenticated
     ? undefined
@@ -30,7 +37,21 @@ export default function MainLayout() {
           </Link>
         </div>
       </div>
-      <ErrorBoundary fallbackRender={(props) => <ErrorDisplay error={props.error as Error} />}>
+      <ErrorBoundary
+        fallbackRender={(props) => {
+          if (shouldResetErrorBoundary) {
+            props.resetErrorBoundary();
+            setShouldResetErrorBoundary(false);
+          }
+
+          const message = props.error instanceof Error
+            ? props.error.message
+            : undefined;
+          
+          return (
+            <ErrorDisplay message={message} />
+          );
+        }}>
         <Outlet />
       </ErrorBoundary>
     </div>

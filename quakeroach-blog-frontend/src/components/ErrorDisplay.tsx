@@ -1,17 +1,20 @@
-import './ErrorDisplay.css';
+import Container from './Container';
+import './styles/ErrorDisplay.css';
 
 interface ErrorDisplayProps {
-  error: Error;
+  message?: string;
 }
 
-export default function ErrorDisplay({ error } : ErrorDisplayProps) {
-  const text = error.message?.length
-    ? `Error loading content: ${error.message}`
+export default function ErrorDisplay({ message } : ErrorDisplayProps) {
+  const text = message !== undefined
+    ? `Error loading content: ${message}`
     : 'Error loading content';
 
   return (
-    <div className='error-display box'>
-      {text}
-    </div>
+    <span className="error-display">
+      <Container>
+        {text}
+      </Container>
+    </span>
   );
 }

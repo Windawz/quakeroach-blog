@@ -2,6 +2,7 @@ import './HomePage.css'
 import BlogPost from '../components/BlogPost';
 import moment from 'moment';
 import { useBlogPosts } from '../lib/backend/queries';
+import { AppError } from '../lib/errorHandling';
 
 export default function HomePage() {
   const queryResult = useBlogPosts({
@@ -40,12 +41,9 @@ export default function HomePage() {
       );
       break;
     case "error":
-      contents = (
-        <div className="box">
-          An error has occured: {queryResult.message}
-        </div>
-      );
-      break;
+      throw new AppError({
+        message: queryResult.message,
+      });
   }
 
   return (
