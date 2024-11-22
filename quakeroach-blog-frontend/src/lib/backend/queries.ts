@@ -1,13 +1,6 @@
 import { Moment } from "moment";
 import { BodyCommandController, QueryResult, useCommand, useQuery } from "./apiHooks";
-
-export interface BlogPost {
-  id: number;
-  title: string;
-  authorName: string;
-  publishDate: Moment;
-  content: string;
-}
+import { BlogPost } from "../data/BlogPost";
 
 export interface BlogPostQueryParams {
   maxCount: number;
