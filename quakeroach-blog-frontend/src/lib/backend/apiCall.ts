@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { envars } from "../envars";
 import assert from "assert";
 import { TokenPair } from "./TokenPair";
@@ -88,7 +88,7 @@ export async function apiCall(request: ApiRequest): Promise<ApiResponse> {
 async function apiCallAuthenticate(request: ApiAuthenticateRequest): Promise<ApiAuthenticateResponse> {
   const { userName, passwordText } = request;
 
-  const response = await axiosInstance
+  const response = await ApiAxiosInstance.get
     .post("/auth/login", {
       userName,
       passwordText,
@@ -119,7 +119,7 @@ async function apiCallAuthenticate(request: ApiAuthenticateRequest): Promise<Api
 
 async function apiCallFetch(request: ApiFetchRequest): Promise<ApiFetchResponse> {
   async function axiosRequest(tokens: TokenPair | undefined): Promise<AxiosResponse<any, any>> {
-    return await axiosInstance.request({
+    return await ApiAxiosInstance.get.request({
       url: request.url,
       method: request.method,
       params: mapRequestInput(request.params),
@@ -219,7 +219,7 @@ async function apiRefresh(refreshToken: string): Promise<ApiRefreshResult> {
   let response: AxiosResponse;
   
   try {
-    response = await axiosInstance.post("/auth/refresh", {
+    response = await ApiAxiosInstance.get.post("/auth/refresh", {
       refreshToken,
     });
   } catch (e) {
@@ -246,9 +246,21 @@ async function apiRefresh(refreshToken: string): Promise<ApiRefreshResult> {
   };
 }
 
-const axiosInstance = axios.create({
-  baseURL: envars.baseApiUrl,
-});
+class ApiAxiosInstance {
+  private static lazyInstance: AxiosInstance | undefined = undefined;
+
+  private constructor() {}
+
+  public static get get(): AxiosInstance {
+    if (this.lazyInstance === undefined) {
+      this.lazyInstance = axios.create({
+        baseURL: envars.baseApiUrl,
+      });
+    }
+    
+    return this.lazyInstance;
+  }
+}
 
 function getLocation(response: AxiosResponse): string | undefined {
   const location = response.headers["Location"];
