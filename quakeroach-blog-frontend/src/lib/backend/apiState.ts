@@ -1,3 +1,4 @@
+import { Moment } from "moment";
 import { TokenPair } from "./TokenPair";
 import { useCookies } from "react-cookie";
 
@@ -8,6 +9,7 @@ export interface ApiStateController {
 
 export interface ApiState {
   userName: string;
+  tokensReceivedAt: Moment;
   tokens: TokenPair;
 };
 

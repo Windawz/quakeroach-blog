@@ -1,13 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useApiState } from "./apiState";
 import { apiCall } from "./apiCall";
 import { ErrorDetails } from "./ErrorDetails";
+import moment from "moment";
 
 export function useAuth(): AuthController {
   const { apiState, setApiState } = useApiState();
 
   const [inputUserName, setInputUserName] = useState<string>("");
   const [inputPasswordText, setInputPasswordText] = useState<string>("");
+
+  useEffect(() => {
+    const now = moment();
+
+    if (apiState !== undefined) {
+      const expirationTime = apiState.tokensReceivedAt.clone();
+
+      expirationTime.add(apiState.tokens.timeUntilRefreshTokenExpiration);
+
+      if (now.isAfter(expirationTime)) {
+        setApiState(undefined);
+      }
+    }
+  }, [apiState]);
 
   const isAuthenticated = (): boolean => {
     return apiState !== undefined;
@@ -28,9 +43,11 @@ export function useAuth(): AuthController {
 
     switch (response.kind) {
       case "success":
+        const tokensReceivedAt = moment();
         setApiState({
           userName: inputUserName,
           tokens: response.tokens,
+          tokensReceivedAt,
         });
         return {
           kind: "success",

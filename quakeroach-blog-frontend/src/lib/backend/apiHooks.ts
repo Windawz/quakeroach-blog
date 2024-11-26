@@ -5,6 +5,7 @@ import { apiCall, ApiFetchResponse } from "./apiCall";
 import { ErrorDetails } from "./ErrorDetails";
 import assert from "assert";
 import { AppError } from "../errorHandling";
+import moment from "moment";
 
 export function useCommand<TResultData, TExecuteParams, TExecuteData>(
   params: UseCommandBodyParams<TResultData, TExecuteParams, TExecuteData>
@@ -246,9 +247,12 @@ export function updateApiStateOrAskForAuthOnExpiredTokens(
         message: "Cannot refresh tokens mid-query because api state is undefined",
       }));
 
+      const tokensReceivedAt = moment();
+
       setApiState({
         userName: apiState!.userName,
         tokens: response.refreshedTokens,
+        tokensReceivedAt,
       });
     }
 

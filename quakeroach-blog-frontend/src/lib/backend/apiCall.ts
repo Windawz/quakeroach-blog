@@ -97,7 +97,7 @@ async function apiCallAuthenticate(request: ApiAuthenticateRequest): Promise<Api
       const result: ApiAuthenticateSuccessResponse = {
         intent: "authenticate",
         kind: "success",
-        tokens: r.data,
+        tokens: mapToTokenPair(r.data),
       };
 
       return result;
@@ -239,10 +239,7 @@ async function apiRefresh(refreshToken: string): Promise<ApiRefreshResult> {
 
   return {
     kind: "success",
-    tokens: {
-      accessToken: response.data.accessToken,
-      refreshToken: response.data.refreshToken,
-    },
+    tokens: mapToTokenPair(response.data),
   };
 }
 
@@ -357,4 +354,12 @@ function mapResponseOutput(output: any | undefined): any | undefined {
   }
 
   return output;
+}
+
+function mapToTokenPair(data: any): TokenPair {
+  return {
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken,
+    timeUntilRefreshTokenExpiration: moment.duration(data.timeUntilRefreshTokenExpiration),
+  };
 }

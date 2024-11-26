@@ -16,7 +16,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<LoginOutput> Login([FromBody] LoginInput input)
+    public async Task<TokenPairOutput> Login([FromBody] LoginInput input)
     {
         return await _authService.LoginAsync(input);
     }
@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh")]
-    public async Task<RefreshOutput> Refresh([FromBody] RefreshInput input)
+    public async Task<TokenPairOutput> Refresh([FromBody] RefreshInput input)
     {
         return await _authService.RefreshAsync(input);
     }

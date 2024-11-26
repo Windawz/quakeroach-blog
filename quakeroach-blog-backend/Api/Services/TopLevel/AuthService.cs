@@ -9,22 +9,23 @@ namespace Quakeroach.Blog.Backend.Api.Services.TopLevel;
 
 public interface IAuthService
 {
-    Task<LoginOutput> LoginAsync(LoginInput input);
+    Task<TokenPairOutput> LoginAsync(LoginInput input);
 
     Task RegisterAsync(RegisterInput input);
 
-    Task<RefreshOutput> RefreshAsync(RefreshInput input);
+    Task<TokenPairOutput> RefreshAsync(RefreshInput input);
 }
 
 public record LoginInput(string UserName, string PasswordText);
-
-public record LoginOutput(string AccessToken, string RefreshToken);
 
 public record RegisterInput(string UserName, string PasswordText);
 
 public record RefreshInput(string RefreshToken);
 
-public record RefreshOutput(string AccessToken, string RefreshToken);
+public record TokenPairOutput(
+    string AccessToken,
+    string RefreshToken,
+    TimeSpan TimeUntilRefreshTokenExpiration);
 
 public class AuthService : IAuthService
 {
@@ -45,7 +46,7 @@ public class AuthService : IAuthService
         _refreshTokenOperator = refreshTokenOperator;
     }
 
-    public async Task<LoginOutput> LoginAsync(LoginInput input)
+    public async Task<TokenPairOutput> LoginAsync(LoginInput input)
     {
         var (userName, passwordText) = input;
         
@@ -79,9 +80,10 @@ public class AuthService : IAuthService
         var accessToken = _accessTokenOperator.Create(user);
         var refreshToken = await _refreshTokenOperator.CreateAsync(user);
 
-        return new LoginOutput(
-            accessToken,
-            _refreshTokenOperator.Format(refreshToken));
+        return new TokenPairOutput(
+            AccessToken: accessToken,
+            RefreshToken: _refreshTokenOperator.Format(refreshToken),
+            TimeUntilRefreshTokenExpiration: refreshToken.GetTimeUntilExpiration());
     }
 
     public async Task RegisterAsync(RegisterInput input)
@@ -110,7 +112,7 @@ public class AuthService : IAuthService
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<RefreshOutput> RefreshAsync(RefreshInput input)
+    public async Task<TokenPairOutput> RefreshAsync(RefreshInput input)
     {
         var refreshToken = (await _refreshTokenOperator.BindAsync(input.RefreshToken))
             ?? throw new InvalidRefreshTokenException();
@@ -122,8 +124,9 @@ public class AuthService : IAuthService
         var newAccessToken = _accessTokenOperator.Create(user);
         var newRefreshToken = await _refreshTokenOperator.CreateAsync(user);
         
-        return new RefreshOutput(
-            newAccessToken,
-            _refreshTokenOperator.Format(newRefreshToken));
+        return new TokenPairOutput(
+            AccessToken: newAccessToken,
+            RefreshToken: _refreshTokenOperator.Format(newRefreshToken),
+            TimeUntilRefreshTokenExpiration: refreshToken.GetTimeUntilExpiration());
     }
 }
