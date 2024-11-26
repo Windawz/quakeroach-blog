@@ -2,10 +2,10 @@ import { RouteObject } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import AuthPage from '../pages/AuthPage';
 import WritePage from '../pages/WritePage';
-import NotFoundPage from '../pages/NotFoundPage';
 import MainLayout from '../layouts/MainLayout';
 import RequireAuthenticated from '../components/RequireAuthenticated';
 import RequireUnauthenticated from '../components/RequireUnauthenticated';
+import ErrorDisplay from '../components/ErrorDisplay';
 
 function makeRoutes(): RouteObject[] {
   const routes: RouteObject[] = [
@@ -30,7 +30,7 @@ function makeRoutes(): RouteObject[] {
         },
         {
           path: "*",
-          Component: NotFoundPage,
+          element: <ErrorDisplay message="Page not found" />,
         },
       ],
     },
