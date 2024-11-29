@@ -22,6 +22,7 @@ export function useAuth(): AuthController {
         setApiState(undefined);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiState]);
 
   const isAuthenticated = (): boolean => {
