@@ -19,6 +19,10 @@
   grid-column: 1 / span 2;
 }
 
+.blog-post-header-title:hover {
+  color: var(--main-color);
+}
+
 .blog-post-header-title > a {
   color: inherit;
 }
