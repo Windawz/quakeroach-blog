@@ -14,6 +14,11 @@
   --nested-box-shadow-color: #202020;
 }
 
+html {
+  padding-right: 0px;
+  scrollbar-gutter: stable;
+}
+
 body {
   background-color: var(--main-background-color);
   background-image: url("https://quakeroach.net/image/bg_qr.png");
