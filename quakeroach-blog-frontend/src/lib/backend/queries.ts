@@ -3,11 +3,22 @@ import { BodyCommandController, QueryResult, useCommand, useQuery } from "./apiH
 import { BlogPost } from "../data/BlogPost";
 
 export interface BlogPostQueryParams {
+  id: number;
+}
+
+export function useBlogPost({ id }: BlogPostQueryParams): QueryResult<BlogPost> {
+  return useQuery<BlogPost>({
+    method: "get",
+    url: `blogPosts/${id}`,
+  });
+}
+
+export interface BlogPostsQueryParams {
   maxCount: number;
   minPublishDate: Moment;
 }
 
-export function useBlogPosts({ maxCount, minPublishDate }: BlogPostQueryParams): QueryResult<BlogPost[]> {
+export function useBlogPosts({ maxCount, minPublishDate }: BlogPostsQueryParams): QueryResult<BlogPost[]> {
   const result = useQuery<BlogPost[]>({
     method: "get",
     url: "blogPosts",

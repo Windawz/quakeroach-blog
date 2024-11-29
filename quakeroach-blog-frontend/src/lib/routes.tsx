@@ -6,6 +6,7 @@ import MainLayout from '../layouts/MainLayout';
 import RequireAuthenticated from '../components/RequireAuthenticated';
 import RequireUnauthenticated from '../components/RequireUnauthenticated';
 import ErrorDisplay from '../components/ErrorDisplay';
+import BlogPostViewPage from '../pages/BlogPostViewPage';
 
 function makeRoutes(): RouteObject[] {
   const routes: RouteObject[] = [
@@ -27,6 +28,10 @@ function makeRoutes(): RouteObject[] {
           element: <RequireAuthenticated>
             <WritePage />
           </RequireAuthenticated>,
+        },
+        {
+          path: "blogpost/:blogPostId",
+          element: <BlogPostViewPage />
         },
         {
           path: "*",

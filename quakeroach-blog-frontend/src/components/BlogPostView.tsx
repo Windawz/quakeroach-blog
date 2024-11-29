@@ -2,6 +2,7 @@ import './styles/BlogPostView.css';
 import Container from './Container';
 import { BlogPost } from '../lib/data/BlogPost';
 import Separator from './Separator';
+import { Link } from 'react-router-dom';
 
 interface BlogPostViewProps {
   blogPost: BlogPost;
@@ -14,9 +15,9 @@ export default function BlogPostView({
     <Container>
       <div className='blog-post-header'>
         <div className='blog-post-header-title'>
-          <a href={`/blogpost/${blogPost.id}`}>
+          <Link to={`/blogpost/${blogPost.id}`}>
             {blogPost.title}
-          </a>
+          </Link>
         </div>
         <div className='blog-post-header-author'>
           by {blogPost.authorName}
