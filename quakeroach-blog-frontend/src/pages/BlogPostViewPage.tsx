@@ -1,22 +1,26 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useBlogPost } from "../lib/backend/queries";
+import { useBlogPost, useDeleteBlogPost } from "../lib/backend/queries";
 import Container from "../components/Container";
 import { AppError } from "../lib/errorHandling";
-import BlogPostShortView from "../components/BlogPostShortView";
+import BlogPostFullView from "../components/BlogPostFullView";
+import { useAuth } from "../lib/backend/useAuth";
 
 export default function BlogPostViewPage() {
   const params = useParams();
   const navigate = useNavigate();
+  const { getAuthInfo } = useAuth();
 
   const blogPostId = Number(params.blogPostId);
 
-  const result = useBlogPost({
+  const queryResult = useBlogPost({
     id: blogPostId,
   });
 
-  switch (result.kind) {
+  const deleteController = useDeleteBlogPost();
+
+  switch (queryResult.kind) {
     case "error":
-      if (result.status === 404) {
+      if (queryResult.status === 404) {
         navigate("");
         return (<></>);
       } else {
@@ -33,7 +37,16 @@ export default function BlogPostViewPage() {
     case "success":
       return (
         <div className="blog-post-view-page">
-          <BlogPostShortView blogPost={result.data} />
+          <BlogPostFullView
+            blogPost={queryResult.data}
+            authInfo={getAuthInfo()}
+            onDelete={() => {
+              deleteController.execute({
+                params: {
+                  id: queryResult.data.id,
+                },
+              });
+            }} />
         </div>
       );
   }
