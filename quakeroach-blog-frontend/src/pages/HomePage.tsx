@@ -1,4 +1,4 @@
-import './HomePage.css'
+import './styles/HomePage.css'
 import BlogPostView from '../components/BlogPostView';
 import moment from 'moment';
 import { useBlogPosts } from '../lib/backend/queries';
