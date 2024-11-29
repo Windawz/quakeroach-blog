@@ -1,5 +1,5 @@
 import './styles/HomePage.css'
-import BlogPostView from '../components/BlogPostView';
+import BlogPostShortView from '../components/BlogPostShortView';
 import moment from 'moment';
 import { useBlogPosts } from '../lib/backend/queries';
 import { AppError } from '../lib/errorHandling';
@@ -24,7 +24,7 @@ export default function HomePage() {
         );
       } else {
         contents = blogPosts.map(x => (
-          <BlogPostView blogPost={x} />
+          <BlogPostShortView blogPost={x} />
         ));
       }
       break;

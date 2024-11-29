@@ -1,0 +1,39 @@
+.blog-post-view-header {
+  display: grid;
+  column-gap: 10px;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+
+  > * {
+    border-style: solid;
+    border-width: 0px;
+  }
+
+  > .title {
+    display: inline;
+    color: var(--accent-color-b);
+    font-size: 120%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    grid-column: 1 / span 2;
+    width: fit-content;
+  }
+
+  > .title:hover {
+    color: var(--main-color);
+  }
+
+  > .author {
+    color: var(--accent-color-a);
+    font-size: 90%;
+    align-self: last baseline;
+  }
+
+  > .date {
+    color: var(--accent-color-a);
+    font-size: 90%;
+    text-align: end;
+    align-self: last baseline;
+  }
+}

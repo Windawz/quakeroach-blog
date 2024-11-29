@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useBlogPost } from "../lib/backend/queries";
 import Container from "../components/Container";
 import { AppError } from "../lib/errorHandling";
-import BlogPostView from "../components/BlogPostView";
+import BlogPostShortView from "../components/BlogPostShortView";
 
 export default function BlogPostViewPage() {
   const params = useParams();
@@ -33,7 +33,7 @@ export default function BlogPostViewPage() {
     case "success":
       return (
         <div className="blog-post-view-page">
-          <BlogPostView blogPost={result.data} />
+          <BlogPostShortView blogPost={result.data} />
         </div>
       );
   }
