@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useBlogPost, useDeleteBlogPost } from "../lib/backend/queries";
 import Container from "../components/Container";
-import { AppError } from "../lib/errorHandling";
 import BlogPostFullView from "../components/BlogPostFullView";
 import { useAuth } from "../lib/backend/useAuth";
+import { useEffect } from "react";
 
 export default function BlogPostViewPage() {
   const params = useParams();
@@ -18,16 +18,16 @@ export default function BlogPostViewPage() {
 
   const deleteController = useDeleteBlogPost();
 
+  useEffect(() => {
+    if (queryResult.kind === "error" && queryResult.status === 404) {
+      navigate("/");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryResult]);
+
   switch (queryResult.kind) {
     case "error":
-      if (queryResult.status === 404) {
-        navigate("");
-        return (<></>);
-      } else {
-        throw new AppError({
-          message: "Failed to get blog post to view",
-        })
-      }
+      return (<></>);
     case "pending":
       return (
         <Container>
@@ -42,9 +42,9 @@ export default function BlogPostViewPage() {
             authInfo={getAuthInfo()}
             onDelete={() => {
               deleteController.execute({
-                params: {
-                  id: queryResult.data.id,
-                },
+                route: [queryResult.data.id],
+                params: {},
+                data: {},
               });
             }} />
         </div>

@@ -34,10 +34,12 @@ export default function WritePage() {
           e.preventDefault();
 
           execute({
+            route: [],
+            params: {},
             data: {
               title,
               content,
-            }
+            },
           });
         }}>
           <label>

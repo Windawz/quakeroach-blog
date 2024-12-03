@@ -7,52 +7,55 @@ import assert from "assert";
 import { AppError } from "../errorHandling";
 import moment from "moment";
 
-export function useCommand<TResultData, TExecuteParams, TExecuteData>(
-  params: UseCommandBodyParams<TResultData, TExecuteParams, TExecuteData>
-): BodyCommandController<TResultData, TExecuteParams, TExecuteData>;
+export function useCommand<TResultData, TRoute extends any[], TParams extends {}, TData extends {}>(
+  args: UseCommandBodyArgs<TResultData, TRoute, TParams, TData>
+): BodyCommandController<TResultData, TRoute, TParams, TData>;
 
-export function useCommand<TResultData, TExecuteParams>(
-  params: UseCommandBodylessParams<TResultData, TExecuteParams>
-): BodylessCommandController<TResultData, TExecuteParams>;
+export function useCommand<TResultData, TRoute extends any[], TParams extends {}>(
+  args: UseCommandBodylessArgs<TResultData, TRoute, TParams>
+): BodylessCommandController<TResultData, TRoute, TParams>;
 
-export function useCommand<TResultData, TExecuteParams, TExecuteData>(
-  params: UseCommandParams<TResultData, TExecuteParams, TExecuteData>
-): CommandController<TResultData, TExecuteParams, TExecuteData> {
+export function useCommand<TResultData, TRoute extends any[], TParams extends {}, TData extends {}>(
+  args: UseCommandArgs<TResultData, TRoute, TParams, TData>
+): CommandController<TResultData, TRoute, TParams, TData> {
   const navigate = useNavigate();
   const { apiState, setApiState } = useApiState();
   const [result, setResult] = useState<CommandResult<TResultData>>({ kind: "dormant" });
 
-  const execute = (executeParams: BodyExecuteParams<TExecuteParams, TExecuteData> | BodylessExecuteParams<TExecuteParams>) => {
+  const execute = (executeArgs: BodyExecuteArgs<TRoute, TParams, TData> | BodylessExecuteArgs<TRoute, TParams>) => {
     if (result.kind === "pending") {
       return;
     }
 
     setResult({ kind: "pending" });
 
-    const data: TExecuteData | undefined = (executeParams as BodyExecuteParams<TExecuteParams, TExecuteData>).data;
+    const routeTransform = args.routeTransform ?? (x => x);
+    const paramsTransform = args.paramsTransform ?? (x => x);
+    const dataTransform = (args as UseCommandBodyArgs<TResultData, TRoute, TParams, TData>).dataTransform ?? (x => x);
+    
+    const route = routeTransform(executeArgs.route);
+    const params = paramsTransform(executeArgs.params);
+    const data = dataTransform((executeArgs as BodyExecuteArgs<TRoute, TParams, TData>).data ?? {});
 
-    const executeParamsTransform = params.executeParamsTransform;
-    const executeDataTransform = (params as UseCommandBodyParams<TResultData, TExecuteParams, TExecuteData>).executeDataTransform;
-
+    const url = joinUrl(
+      args.url,
+      route);
+      
     const performCall = async () => {
       const response = await apiCall({
         intent: "fetch",
-        method: params.method,
-        url: params.url,
-        params: executeParamsTransform !== undefined && executeParams.params !== undefined
-          ? executeParamsTransform(executeParams.params)
-          : executeParams.params,
-        data: executeDataTransform !== undefined && data !== undefined
-          ? executeDataTransform(data)
-          : data,
+        method: args.method,
+        url,
+        params,
+        data,
         tokens: apiState?.tokens,
       });
 
       updateApiStateOrAskForAuthOnExpiredTokens(response, navigate, apiState, setApiState, response => {
         switch (response.kind) {
           case "success":
-            const finalData = params.resultDataTransform !== undefined
-              ? params.resultDataTransform(response.data)
+            const finalData = args.resultDataTransform !== undefined
+              ? args.resultDataTransform(response.data)
               : response.data;
 
             setResult({
@@ -81,7 +84,7 @@ export function useCommand<TResultData, TExecuteParams, TExecuteData>(
   };
 }
 
-export function useQuery<T>(params: UseQueryParams<T>): QueryResult<T> {
+export function useQuery<T>(params: UseQueryArgs<T>): QueryResult<T> {
   const navigate = useNavigate();
   const { apiState, setApiState } = useApiState();
   const [result, setResult] = useState<QueryResult<T>>({ kind: "pending" });
@@ -140,54 +143,48 @@ export function useQuery<T>(params: UseQueryParams<T>): QueryResult<T> {
   return result;
 }
 
-export type UseCommandParams<TResultData, TExecuteParams, TExecuteData> =
-  UseCommandBodyParams<TResultData, TExecuteParams, TExecuteData>
-  | UseCommandBodylessParams<TResultData, TExecuteParams>;
+export type UseCommandArgs<TResultData, TRoute, TParams extends {}, TData extends {}> =
+  UseCommandBodyArgs<TResultData, TRoute, TParams, TData>
+  | UseCommandBodylessArgs<TResultData, TRoute, TParams>;
 
-export interface UseCommandBodyParams<TResultData, TExecuteParams, TExecuteData> extends UseCommandParamsBase<TResultData, TExecuteParams> {
+export interface UseCommandBodyArgs<TResultData, TRoute, TParams extends {}, TData extends {}> extends UseCommandArgsBase<TResultData, TRoute, TParams> {
   method: "post" | "put" | "delete";
-  executeDataTransform?: (data: TExecuteData) => any;
+  dataTransform?: (data: TData) => object;
 }
 
-export interface UseCommandBodylessParams<TResultData, TExecuteParams> extends UseCommandParamsBase<TResultData, TExecuteParams> {
+export interface UseCommandBodylessArgs<TResultData, TRoute, TParams extends {}> extends UseCommandArgsBase<TResultData, TRoute, TParams> {
   method: "get";
 }
 
-interface UseCommandParamsBase<TResultData, TExecuteParams> extends ApiHookParamsBase<TResultData> {
-  executeParamsTransform?: (params: TExecuteParams) => any;
+interface UseCommandArgsBase<TResultData, TRoute, TParams extends {}> extends ApiHookArgsBase<TResultData> {
+  routeTransform?: (route: TRoute) => any[];
+  paramsTransform?: (params: TParams) => object;
 }
 
-export type CommandController<TResultData, TExecuteParams, TExecuteData> = 
-  BodyCommandController<TResultData, TExecuteParams, TExecuteData>
-  | BodylessCommandController<TResultData, TExecuteParams>;
+export type CommandController<TResultData, TRoute extends any[], TParams extends {}, TData extends {}> = 
+  BodyCommandController<TResultData, TRoute, TParams, TData>
+  | BodylessCommandController<TResultData, TRoute, TParams>;
 
-export interface BodyCommandController<TResultData, TExecuteParams, TExecuteData> extends CommandControllerBase<TResultData> {
-  readonly execute: (params: BodyExecuteParams<TExecuteParams, TExecuteData>) => void;
+export interface BodyCommandController<TResultData, TRoute extends any[], TParams extends {}, TData extends {}> extends CommandControllerBase<TResultData> {
+  readonly execute: (args: BodyExecuteArgs<TRoute, TParams, TData>) => void;
 }
 
-export interface BodylessCommandController<TResultData, TExecuteParams> extends CommandControllerBase<TResultData> {
-  readonly execute: (params: BodylessExecuteParams<TExecuteParams>) => void;
+export interface BodylessCommandController<TResultData, TRoute extends any[], TParams extends {}> extends CommandControllerBase<TResultData> {
+  readonly execute: (args: BodylessExecuteArgs<TRoute, TParams>) => void;
 }
 
 interface CommandControllerBase<TResultData> {
   result: CommandResult<TResultData>;
 }
 
-export type BodyExecuteParams<TExecuteParams, TExecuteData> = BodylessExecuteParams<TExecuteParams> & (TExecuteData extends undefined
-  ? {
-    data?: undefined;
-  }
-  : {
-    data: TExecuteData;
-  });
+export type BodyExecuteArgs<TRoute extends any[], TParams extends {}, TData extends {}> = BodylessExecuteArgs<TRoute, TParams> & {
+  data: TData;
+};
 
-export type BodylessExecuteParams<TExecuteParams> = TExecuteParams extends undefined
-  ? {
-    params?: undefined;
-  }
-  : {
-    params: TExecuteParams;
-  };
+export type BodylessExecuteArgs<TRoute extends any[], TParams extends {}> = {
+  route: TRoute;
+  params: TParams;
+};
 
 export type CommandResult<TResultData> = ApiHookSuccessResult<TResultData> | ApiHookDormantResult | ApiHookPendingResult | ApiHookErrorResult;
 
@@ -211,22 +208,22 @@ export interface ApiHookErrorResult extends ErrorDetails {
   kind: "error";
 }
 
-export type UseQueryParams<TResultData> = UseQueryBodylessParams<TResultData> | UseQueryBodyParams<TResultData>;
+export type UseQueryArgs<TResultData> = UseQueryBodylessArgs<TResultData> | UseQueryBodyArgs<TResultData>;
 
-export interface UseQueryBodylessParams<TResultData> extends UseQueryParamsBase<TResultData> {
+export interface UseQueryBodylessArgs<TResultData> extends UseQueryArgsBase<TResultData> {
   method: "get";
 }
 
-export interface UseQueryBodyParams<TResultData> extends UseQueryParamsBase<TResultData> {
+export interface UseQueryBodyArgs<TResultData> extends UseQueryArgsBase<TResultData> {
   method: "post" | "put" | "delete";
   data?: any;
 }
 
-interface UseQueryParamsBase<TResultData> extends ApiHookParamsBase<TResultData> {
+interface UseQueryArgsBase<TResultData> extends ApiHookArgsBase<TResultData> {
   params?: any;
 }
 
-interface ApiHookParamsBase<TResultData> {
+interface ApiHookArgsBase<TResultData> {
   url: string;
   resultDataTransform?: (value: any) => TResultData;
 }
@@ -258,4 +255,15 @@ export function updateApiStateOrAskForAuthOnExpiredTokens(
 
     onTokensNotExpired(response);
   }
+}
+
+function joinUrl(firstPart: string, nextParts: any[]): string {
+  const partMapper = (x: any) => 
+    (typeof x !== "string"
+      ? String(x)
+      : x).replaceAll("/", "");
+    
+  const allParts = [firstPart, ...nextParts].map(partMapper);
+
+  return `/${allParts.join("/")}`;
 }

@@ -36,18 +36,18 @@ export interface CreateBlogPostExecuteData {
   content: string;
 }
 
-export function useCreateBlogPost(): BodyCommandController<BlogPost, undefined, CreateBlogPostExecuteData> {
+export function useCreateBlogPost(): BodyCommandController<BlogPost, [], {}, CreateBlogPostExecuteData> {
   return useCommand({
     method: "post",
     url: "/blogPosts",
-    executeDataTransform: (data) => ({
+    dataTransform: (data) => ({
       title: data.title.trim(),
       content: data.content.trim(),
     }),
   });
 }
 
-export function useDeleteBlogPost(): BodyCommandController<undefined, { id: number }, undefined> {
+export function useDeleteBlogPost(): BodyCommandController<undefined, [number], {}, {}> {
   return useCommand({
     method: "delete",
     url: "/blogPosts",
