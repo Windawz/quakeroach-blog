@@ -25,6 +25,13 @@ export default function BlogPostViewPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryResult]);
 
+  useEffect(() => {
+    if (deleteController.result.kind === "success") {
+      navigate("/home");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deleteController.result]);
+
   switch (queryResult.kind) {
     case "error":
       return (<></>);
