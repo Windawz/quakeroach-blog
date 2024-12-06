@@ -29,8 +29,12 @@ export function useApiState(): ApiStateController {
     };
   
   const setApiState = (value: ApiState | undefined) => value !== undefined
-    ? setCookie(cookieName, value)
-    : removeCookie(cookieName);
+    ? setCookie(cookieName, value, {
+      path: "/",
+    })
+    : removeCookie(cookieName, {
+      path: "/",
+    });
   
   return {
     apiState,
