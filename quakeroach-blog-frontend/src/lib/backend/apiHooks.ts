@@ -228,7 +228,7 @@ interface ApiHookArgsBase<TResultData> {
   resultDataTransform?: (value: any) => TResultData;
 }
 
-export function updateApiStateOrAskForAuthOnExpiredTokens(
+function updateApiStateOrAskForAuthOnExpiredTokens(
   response: ApiFetchResponse,
   navigate: NavigateFunction,
   apiState: ApiState | undefined,
