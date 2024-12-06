@@ -11,7 +11,7 @@ export function useAuth(): AuthController {
   const [inputPasswordText, setInputPasswordText] = useState<string>("");
 
   useEffect(() => {
-    const now = moment();
+    const now = moment.utc();
 
     if (apiState !== undefined) {
       const expirationTime = apiState.tokensReceivedAt.clone();
@@ -44,7 +44,7 @@ export function useAuth(): AuthController {
 
     switch (response.kind) {
       case "success":
-        const tokensReceivedAt = moment();
+        const tokensReceivedAt = moment.utc();
         setApiState({
           userName: inputUserName,
           tokens: response.tokens,

@@ -244,7 +244,7 @@ function updateApiStateOrAskForAuthOnExpiredTokens(
         message: "Cannot refresh tokens mid-query because api state is undefined",
       }));
 
-      const tokensReceivedAt = moment();
+      const tokensReceivedAt = moment.utc();
 
       setApiState({
         userName: apiState!.userName,

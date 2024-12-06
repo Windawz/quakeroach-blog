@@ -25,7 +25,7 @@ export function useApiState(): ApiStateController {
     : {
       userName: cookie.userName,
       tokens: cookie.tokens,
-      tokensReceivedAt: moment(cookie.tokensReceivedAt),
+      tokensReceivedAt: moment.utc(cookie.tokensReceivedAt),
     };
   
   const setApiState = (value: ApiState | undefined) => value !== undefined
