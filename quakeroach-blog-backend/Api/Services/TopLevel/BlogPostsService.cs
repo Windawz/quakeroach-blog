@@ -9,7 +9,7 @@ public interface IBlogPostsService
 {
     Task<List<BlogPostOutput>> GetManyAsync(
         int maxCount,
-        DateTime minPublishDate);
+        DateTime? minPublishDate = null);
     
     Task<BlogPostOutput> GetAsync(long id);
 
@@ -47,25 +47,37 @@ public class BlogPostsService : IBlogPostsService
 
     public async Task<List<BlogPostOutput>> GetManyAsync(
         int maxCount,
-        DateTime minPublishDate)
+        DateTime? minPublishDate = null)
     {
         if (maxCount <= 0)
         {
             throw new NonPositiveMaxCountException(maxCount);
         }
 
-        var blogPosts = await _dbContext.BlogPosts
+        IQueryable<BlogPost> blogPosts = _dbContext.BlogPosts
             .Include(x => x.AuthorUser)
-            .OrderByDescending(x => x.PublishDate)
-            .Where(x => x.PublishDate >= minPublishDate)
-            .Take(maxCount)
-            .ToListAsync();
+            .OrderByDescending(x => x.PublishDate);
+        
+        if (minPublishDate is not null)
+        {
+            blogPosts = blogPosts.Where(x => x.PublishDate >= minPublishDate);
+        }
 
-        return blogPosts
+        return (await blogPosts
+            .Take(maxCount)
+            .Select(x => new
+            {
+                x.Id,
+                x.Title,
+                AuthorName = x.AuthorUser.Name,
+                x.PublishDate,
+                x.Content,
+            })
+            .ToListAsync())
             .Select(x => new BlogPostOutput(
                 Id: x.Id,
                 Title: x.Title,
-                AuthorName: x.AuthorUser.Name,
+                AuthorName: x.AuthorName,
                 PublishDate: x.PublishDate,
                 Content: x.Content))
             .ToList();

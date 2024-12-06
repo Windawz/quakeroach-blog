@@ -15,7 +15,7 @@ export function useBlogPost({ id }: BlogPostQueryParams): QueryResult<BlogPost> 
 
 export interface BlogPostsQueryParams {
   maxCount: number;
-  minPublishDate: Moment;
+  minPublishDate?: Moment;
 }
 
 export function useBlogPosts({ maxCount, minPublishDate }: BlogPostsQueryParams): QueryResult<BlogPost[]> {

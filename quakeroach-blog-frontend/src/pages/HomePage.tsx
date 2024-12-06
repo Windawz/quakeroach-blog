@@ -1,13 +1,11 @@
 import './styles/HomePage.css'
 import BlogPostShortView from '../components/BlogPostShortView';
-import moment from 'moment';
 import { useBlogPosts } from '../lib/backend/queries';
 import { AppError } from '../lib/errorHandling';
 
 export default function HomePage() {
   const queryResult = useBlogPosts({
     maxCount: 10,
-    minPublishDate: moment('2024-01-01'),
   });
 
   let contents = undefined;

@@ -23,7 +23,7 @@ public class BlogPostsController : ControllerBase
     [HttpGet]
     public async Task<List<BlogPostOutput>> GetMany(
         [FromQuery] int maxCount,
-        [FromQuery] DateTime minPublishDate)
+        [FromQuery] DateTime? minPublishDate)
     {
         return await _blogPostsService.GetManyAsync(
             maxCount: maxCount,
