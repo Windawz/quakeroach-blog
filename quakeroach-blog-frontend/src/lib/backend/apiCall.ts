@@ -337,7 +337,7 @@ function mapResponseOutput(output: any | undefined): any | undefined {
   }
 
   if (typeof output === "string") {
-    const date = moment(output, moment.ISO_8601, true);
+    const date = moment.utc(output, moment.ISO_8601, true);
     if (date.isValid()) {
       return date;
     }
