@@ -21,6 +21,8 @@ public class PostConfigureJwtBearerOptions : IPostConfigureOptions<JwtBearerOpti
         tvp.ValidateAudience = true;
         tvp.ValidAudience = _authOptions.Audience;
         tvp.ValidateLifetime = true;
+        tvp.ClockSkew = TimeSpan.Zero;
+        
         tvp.IssuerSigningKey = _authOptions.SigningKey;
     }
 }
