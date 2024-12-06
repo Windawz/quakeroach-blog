@@ -11,23 +11,32 @@ public class RefreshTokenCleaner : BackgroundService
 {
     private readonly AuthOptions _authOptions;
     private readonly IServiceProvider _serviceProvider;
-    private DateTime _lastCleanupTime = DateTime.UtcNow;
+    private readonly ILogger _logger;
 
-    public RefreshTokenCleaner(IOptions<AuthOptions> authOptions, IServiceProvider serviceProvider)
+    public RefreshTokenCleaner(
+        IOptions<AuthOptions> authOptions,
+        IServiceProvider serviceProvider,
+        ILogger<RefreshTokenCleaner> logger)
     {
         _authOptions = authOptions.Value;
         _serviceProvider = serviceProvider;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("Starting");
+
         while (!stoppingToken.IsCancellationRequested)
         {
+            _logger.LogInformation("Performing cleanup");
+
             var now = DateTime.UtcNow;
             var expiredRefreshTokens = new List<RefreshToken>();
 
             if (stoppingToken.IsCancellationRequested)
             {
+                _logger.LogInformation("Cancellation requested on cycle start");
                 break;
             }
 
@@ -40,8 +49,11 @@ public class RefreshTokenCleaner : BackgroundService
                     .ToListAsync();
             }
 
+            _logger.LogInformation($"Found {expiredRefreshTokens.Count} token(s)");
+
             if (stoppingToken.IsCancellationRequested)
             {
+                _logger.LogInformation("Cancellation requested after query");
                 break;
             }
 
@@ -52,7 +64,11 @@ public class RefreshTokenCleaner : BackgroundService
                 await refreshTokenOperator.DestroyManyAsync(expiredRefreshTokens);
             }
 
+            _logger.LogInformation("Cleanup has been performed");
+
             await Task.Delay(_authOptions.RefreshTokenCleanupInterval, stoppingToken);
         }
+
+        _logger.LogInformation("Stopping");
     }
 }

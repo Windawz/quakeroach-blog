@@ -22,6 +22,11 @@ public class Program
         builder.Services.AddSwaggerGen();
         builder.Services.AddOptions();
 
+        builder.Services.AddLogging(loggingBuilder =>
+        {
+            loggingBuilder.AddConsole();
+        });
+
         builder.Services.AddCors();
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
