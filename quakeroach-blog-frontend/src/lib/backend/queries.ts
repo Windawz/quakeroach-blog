@@ -31,12 +31,12 @@ export function useBlogPosts({ maxCount, minPublishDate }: BlogPostsQueryParams)
   return result;
 }
 
-export interface CreateBlogPostExecuteData {
+export interface CreateBlogPostData {
   title: string;
   content: string;
 }
 
-export function useCreateBlogPost(): BodyCommandController<BlogPost, [], {}, CreateBlogPostExecuteData> {
+export function useCreateBlogPost(): BodyCommandController<BlogPost, [], {}, CreateBlogPostData> {
   return useCommand({
     method: "post",
     url: "/blogPosts",
