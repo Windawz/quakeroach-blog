@@ -4,6 +4,7 @@ import Container from "../components/Container";
 import BlogPostFullView from "../components/BlogPostFullView";
 import { useEffect } from "react";
 import { CommandResult } from "../lib/backend/apiHooks";
+import BlogPostCommentSection from "../components/BlogPostCommentSection";
 
 export default function BlogPostViewPage() {
   const params = useParams();
@@ -42,6 +43,7 @@ export default function BlogPostViewPage() {
           <BlogPostFullView
             blogPost={result.data}
             deleteResultHandler={deleteResultHandler} />
+          <BlogPostCommentSection />
         </div>
       );
   }
