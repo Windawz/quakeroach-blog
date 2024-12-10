@@ -1,22 +1,22 @@
-import './styles/BlogPostViewHeader.css';
+import './styles/BlogPostHeader.css';
 import { Moment } from "moment";
 import { Link } from "react-router-dom";
 
-export interface BlogPostViewHeaderProps {
+export interface BlogPostHeaderProps {
   blogPostId: number;
   title: string;
   authorName: string;
   publishDate: Moment;
 }
 
-export default function BlogPostViewHeader({
+export default function BlogPostHeader({
   blogPostId,
   title,
   authorName,
   publishDate,
-}: BlogPostViewHeaderProps) {
+}: BlogPostHeaderProps) {
   return (
-    <div className="blog-post-view-header">
+    <div className="blog-post-header">
       <Link className="title" to={`/blogpost/${blogPostId}`}>
         {title}
       </Link>

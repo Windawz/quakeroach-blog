@@ -1,54 +1,41 @@
-import { AuthInfo } from "../lib/backend/useAuth";
+import { CommandResult } from "../lib/backend/apiHooks";
 import { BlogPost } from "../lib/data/BlogPost";
-import BlogPostViewBody from "./BlogPostViewBody";
-import BlogPostViewHeader from "./BlogPostViewHeader";
-import Button from "./Button";
+import BlogPostBody from "./BlogPostBody";
+import BlogPostFooter from "./BlogPostFooter";
+import BlogPostHeader from "./BlogPostHeader";
 import Container from "./Container";
 import Separator from "./Separator";
 
 export interface BlogPostFullViewProps {
   blogPost: BlogPost;
-  authInfo: AuthInfo;
-  onDelete: () => void;
+  deleteResultHandler?: (result: CommandResult<undefined>) => void;
 }
 
 export default function BlogPostFullView({
   blogPost,
-  authInfo,
-  onDelete,
+  deleteResultHandler,
 }: BlogPostFullViewProps) {
-  const isAuthor = authInfo.isAuthenticated && authInfo.userName === blogPost.authorName;
-
-  const footerButtons = [];
-
-  if (isAuthor) {
-    footerButtons.push((
-      <Button kind="callback" callback={() => onDelete()}>
-        Delete
-      </Button>
-    ));
-  }
-
-  const footer = footerButtons.length > 0
-    ? (
-      <>
-        <Separator />
-        {footerButtons}
-      </>
-    )
-    : undefined;
+  const footer = BlogPostFooter({
+    blogPost,
+    deleteResultHandler,
+  });
 
   return (
     <Container className="blog-post-full-view">
-      <BlogPostViewHeader
+      <BlogPostHeader
         blogPostId={blogPost.id}
         title={blogPost.title}
         authorName={blogPost.authorName}
         publishDate={blogPost.publishDate} />
       <Separator />
-      <BlogPostViewBody
+      <BlogPostBody
         content={blogPost.content} />
-      {footer}
+      {footer !== undefined
+        ? <>
+          <Separator />
+          {footer}
+        </>
+        : undefined}
     </Container>
   );
 }

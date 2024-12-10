@@ -1,4 +1,4 @@
-.blog-post-view-header {
+.blog-post-header {
   display: grid;
   column-gap: 10px;
   grid-template-columns: repeat(2, 1fr);
