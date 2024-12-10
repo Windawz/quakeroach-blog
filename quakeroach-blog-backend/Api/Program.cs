@@ -50,7 +50,7 @@ public class Program
             .AddScoped<IPasswordHasher<User>, PasswordHasher<User>>()
             .AddScoped<IAccessTokenOperator, AccessTokenOperator>()
             .AddScoped<IRefreshTokenOperator, RefreshTokenOperator>()
-            .AddScoped<IHttpContextView, HttpContextView>()
+            .AddScoped<IUserInfoAccessor, UserInfoAccessor>()
             .AddScoped<IBlogPostsService, BlogPostsService>()
             .AddScoped<IAuthService, AuthService>();
         

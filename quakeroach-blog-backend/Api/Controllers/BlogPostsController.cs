@@ -10,14 +10,14 @@ namespace Quakeroach.Blog.Backend.Api.Controllers;
 public class BlogPostsController : ControllerBase
 {
     private readonly IBlogPostsService _blogPostsService;
-    private readonly IHttpContextView _httpContextView;
+    private readonly IUserInfoAccessor _userInfoAccessor;
 
     public BlogPostsController(
         IBlogPostsService blogPostsService,
-        IHttpContextView httpContextView)
+        IUserInfoAccessor httpContextView)
     {
         _blogPostsService = blogPostsService;
-        _httpContextView = httpContextView;
+        _userInfoAccessor = httpContextView;
     }
 
     [HttpGet]
@@ -40,7 +40,7 @@ public class BlogPostsController : ControllerBase
     [Authorize]
     public async Task<CreatedAtActionResult> Create([FromBody] BlogPostCreationInput input)
     {
-        string authorName = _httpContextView.UserName;
+        string authorName = _userInfoAccessor.GetUserName(User);
 
         var result = await _blogPostsService.CreateAsync(authorName, input);
 
@@ -51,7 +51,7 @@ public class BlogPostsController : ControllerBase
     [Authorize]
     public async Task<ActionResult> Delete(long id)
     {
-        string userName = _httpContextView.UserName;
+        string userName = _userInfoAccessor.GetUserName(User);
 
         var result = await _blogPostsService.DeleteAsync(userName, id);
 
