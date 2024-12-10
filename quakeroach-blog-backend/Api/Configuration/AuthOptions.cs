@@ -15,9 +15,9 @@ public class AuthOptions
 
     public required SecurityKey SigningKey { get; set; }
 
-    public required TimeSpan AccessTokenLifeTime { get; set; }
+    public required TimeSpan AccessTokenLifetime { get; set; }
 
-    public required TimeSpan RefreshTokenLifeTime { get; set; }
+    public required TimeSpan RefreshTokenLifetime { get; set; }
 
     public required TimeSpan RefreshTokenCleanupInterval { get; set; }
 

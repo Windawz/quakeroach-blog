@@ -41,7 +41,7 @@ public class RefreshTokenOperator : IRefreshTokenOperator
             Name = Guid.NewGuid().ToString(),
             User = user,
             CreationTime = now,
-            ExpirationTime = now + _authOptions.RefreshTokenLifeTime,
+            ExpirationTime = now + _authOptions.RefreshTokenLifetime,
         };
 
         _dbContext.RefreshTokens.Add(token);

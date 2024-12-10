@@ -35,7 +35,7 @@ public class AccessTokenOperator : IAccessTokenOperator
                     user.Name),
             ]),
             notBefore: now,
-            expires: now + _authOptions.AccessTokenLifeTime,
+            expires: now + _authOptions.AccessTokenLifetime,
             issuedAt: now,
             signingCredentials: new SigningCredentials(
                 _authOptions.SigningKey,
