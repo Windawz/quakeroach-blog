@@ -1,6 +1,6 @@
 export default function combineClassName(
   baseClassName: string,
-  addedClassName: string | undefined,
+  ...addedClassNames: (string | undefined)[]
 ) {
-  return [baseClassName, addedClassName].join(" ");
+  return [baseClassName, ...addedClassNames].join(" ");
 }
