@@ -3,6 +3,7 @@ import { useCreateBlogPost } from '../lib/backend/queries';
 import './styles/WritePage.css';
 import Button from '../components/Button';
 import Container from '../components/Container';
+import TextBox from '../components/TextBox';
 
 export default function WritePage() {
   const [title, setTitle] = useState<string>('');
@@ -30,7 +31,7 @@ export default function WritePage() {
   return (
     <div className='write-page'>
       <Container>
-        <form className='editor-container' method='post' onSubmit={(e) => {
+        <form method='post' onSubmit={(e) => {
           e.preventDefault();
 
           execute({
@@ -42,27 +43,16 @@ export default function WritePage() {
             },
           });
         }}>
-          <label>
-            Title:
-            <br />
-            <input
-              className='editor-title'
-              name='editor-title'
-              type='text'
-              onChange={(e) => {
-                setTitle(e.target.value);
-              }} />
-          </label>
-          <label>
-            Content:
-            <br />
-            <textarea
-              className='editor-content'
-              name='editor-content'
-              onChange={(e) => {
-                setContent(e.target.value);
-              }} />
-          </label>
+          <TextBox
+            kind="singleLine"
+            type="text"
+            label="Title"
+            onChange={x => setTitle(x)} />
+          <TextBox
+            className="contents-text-box"
+            kind="multiLine"
+            label="Contents"
+            onChange={x => setContent(x)} />
           {completionDisplay ?? submitButton}
         </form>
       </Container>

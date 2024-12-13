@@ -7,7 +7,7 @@
 .auth-container {
   align-self: center;
   align-content: center;
-  max-width: min-content;
+  width: 20vw;
 }
 
 .auth-failure-message {

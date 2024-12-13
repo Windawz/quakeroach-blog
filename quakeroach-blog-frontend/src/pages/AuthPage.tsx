@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/backend/useAuth';
 import Button from '../components/Button';
 import Container from '../components/Container';
+import TextBox from '../components/TextBox';
 
 export default function AuthPage() {
   const {
@@ -37,26 +38,16 @@ export default function AuthPage() {
     <div className='auth-page'>
       <form className="auth-container-outer" onSubmit={onSubmit}>
         <Container className="auth-container">
-          <label>
-            Username:
-            <br />
-            <input
-              className='auth-username'
-              type='text'
-              onChange={e => {
-                setInputUserName(e.target.value);
-              }} />
-          </label>
-          <label>
-            Password:
-            <br />
-            <input
-              className='auth-password'
-              type='password'
-              onChange={e => {
-                setInputPasswordText(e.target.value);
-              }} />
-          </label>
+          <TextBox
+            kind="singleLine"
+            type="text"
+            label="Username"
+            onChange={x => setInputUserName(x)} />
+          <TextBox
+            kind="singleLine"
+            type="password"
+            label="Password"
+            onChange={x => setInputPasswordText(x)} />
           {failureMessage === undefined
             ? (
               <></>
