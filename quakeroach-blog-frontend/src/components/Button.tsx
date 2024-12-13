@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import combineClassName from '../lib/combineClassName';
 import Container from './Container';
 import './styles/Button.css';
 
@@ -28,7 +29,7 @@ interface ButtonPropsBase {
 }
 
 export default function Button(props: ButtonProps) {
-  const className = ["button", props.className].join(' ');
+  const className = combineClassName("button", props.className);
 
   return (
     <Container id={props.id} className={className}>
