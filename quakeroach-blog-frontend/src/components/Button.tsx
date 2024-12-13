@@ -44,9 +44,9 @@ function createContentWrapper(content: React.ReactNode, props: ButtonProps) {
   switch (props.kind) {
     case "callback":
       return (
-        <span className={className} onClick={props.callback}>
+        <div className={className} onClick={props.callback}>
           {content}
-        </span>
+        </div>
       );
     case "link":
       return (

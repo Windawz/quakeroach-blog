@@ -9,6 +9,11 @@
   text-decoration-line: none;
 }
 
+.button > button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
 .button-content-wrapper {
   margin: initial;
   display: block;
