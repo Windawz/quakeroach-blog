@@ -43,7 +43,8 @@ export default function BlogPostViewPage() {
           <BlogPostFullView
             blogPost={result.data}
             deleteResultHandler={deleteResultHandler} />
-          <BlogPostCommentSection />
+          <BlogPostCommentSection
+            blogPost={result.data} />
         </div>
       );
   }
