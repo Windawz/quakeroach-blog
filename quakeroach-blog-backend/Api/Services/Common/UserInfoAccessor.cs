@@ -6,7 +6,7 @@ namespace Quakeroach.Blog.Backend.Api.Services.Common;
 
 public interface IUserInfoAccessor
 {
-    string GetUserName(ClaimsPrincipal claimsPrincipal);
+    string? TryGetUserName(ClaimsPrincipal claimsPrincipal);
 }
 
 public class UserInfoAccessor : IUserInfoAccessor
@@ -18,9 +18,17 @@ public class UserInfoAccessor : IUserInfoAccessor
         _authOptions = authOptions.Value;
     }
 
-    public string GetUserName(ClaimsPrincipal claimsPrincipal)
+    public string? TryGetUserName(ClaimsPrincipal claimsPrincipal)
     {
-        return claimsPrincipal.FindFirst(_authOptions.NameClaimType)?.Value
-            ?? throw new InvalidOperationException("User has no name claim");
+        return claimsPrincipal.FindFirst(_authOptions.NameClaimType)?.Value;
+    }
+}
+
+public static class UserInfoAccessorExtensions
+{
+    public static string GetUserName(this IUserInfoAccessor userInfoAccessor, ClaimsPrincipal claimsPrincipal)
+    {
+        return userInfoAccessor.TryGetUserName(claimsPrincipal)
+            ?? throw new ArgumentException($"{nameof(claimsPrincipal)} has no user name", nameof(claimsPrincipal));
     }
 }

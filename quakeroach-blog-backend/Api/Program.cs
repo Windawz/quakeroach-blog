@@ -51,6 +51,7 @@ public class Program
             .AddScoped<IAccessTokenOperator, AccessTokenOperator>()
             .AddScoped<IRefreshTokenOperator, RefreshTokenOperator>()
             .AddScoped<IUserInfoAccessor, UserInfoAccessor>()
+            .AddScoped<ICommentsService, CommentsService>()
             .AddScoped<IBlogPostsService, BlogPostsService>()
             .AddScoped<IAuthService, AuthService>();
         

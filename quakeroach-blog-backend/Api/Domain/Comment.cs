@@ -18,3 +18,16 @@ public class AuthenticatedComment : Comment
 {
     public required User Author { get; set; }
 }
+
+public static class CommentExtensions
+{
+    public static string GetAuthorName(this Comment comment)
+    {
+        return comment switch
+        {
+            AnonymousComment anonymous => anonymous.AuthorName,
+            AuthenticatedComment authenticated => authenticated.Author.Name,
+            _ => throw new ArgumentException($"Unknown {nameof(Comment)} subtype", nameof(comment)),
+        };
+    }
+}
