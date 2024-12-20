@@ -9,4 +9,6 @@ public class BlogPost : Entity
     public required DateTime PublishDate { get; set; }
     
     public required string Content { get; set; }
+
+    public List<Comment> Comments { get; set; } = [];
 }

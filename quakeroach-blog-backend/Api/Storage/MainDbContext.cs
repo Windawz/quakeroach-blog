@@ -21,6 +21,12 @@ public class MainDbContext : DbContext
 
     public required DbSet<RefreshToken> RefreshTokens { get; init; }
 
+    public required DbSet<Comment> Comments { get; init; }
+
+    public required DbSet<AnonymousComment> AnonymousComments { get; init; }
+
+    public required DbSet<AuthenticatedComment> AuthenticatedComments { get; init; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
