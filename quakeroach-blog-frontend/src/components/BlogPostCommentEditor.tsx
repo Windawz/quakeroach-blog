@@ -31,8 +31,8 @@ export default function BlogPostCommentEditor({
           params: {},
           data: {
             authorName: authController.getAuthInfo().isAuthenticated
-              ? name
-              : undefined,
+              ? undefined
+              : name,
             contents,
           },
         });
