@@ -12,7 +12,7 @@ export default function BlogPostCommentSection({
   return (
     <div className="blog-post-comment-section">
       <BlogPostCommentList blogPostId={blogPost.id} />
-      <BlogPostCommentEditor />
+      <BlogPostCommentEditor blogPostId={blogPost.id} />
     </div>
   );
 }
