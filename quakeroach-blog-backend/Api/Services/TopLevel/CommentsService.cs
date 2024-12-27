@@ -173,6 +173,7 @@ public class CommentsService : ICommentsService
     public async Task<List<CommentOutput>> GetManyAsync(long blogPostId, int maxCount, DateTime? minPublishDate)
     {
         var comments = _dbContext.Comments
+            .Include(x => x.BlogPost)
             .Where(x => x.BlogPost.Id == blogPostId);
 
         if (minPublishDate is not null)
