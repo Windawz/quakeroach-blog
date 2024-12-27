@@ -262,8 +262,10 @@ function joinUrl(firstPart: string, nextParts: any[]): string {
     (typeof x !== "string"
       ? String(x)
       : x).replaceAll("/", "");
-    
-  const allParts = [firstPart, ...nextParts].map(partMapper);
 
-  return `/${allParts.join("/")}`;
+  const mappedParts = nextParts.map(partMapper);
+    
+  const allParts = [firstPart, ...mappedParts];
+
+  return `${firstPart.startsWith("/") ? "" : "/"}${allParts.join("/")}`;
 }
