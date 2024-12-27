@@ -22,6 +22,7 @@ public interface ICommentsService
 
 public record CommentOutput(
     long Id,
+    long BlogPostId,
     string AuthorName,
     DateTime PublishDate,
     string Contents);
@@ -120,6 +121,7 @@ public class CommentsService : ICommentsService
         return new CommentCreationSuccessResult(
             new CommentOutput(
                 Id: comment.Id,
+                BlogPostId: comment.BlogPost.Id,
                 AuthorName: comment.GetAuthorName(),
                 PublishDate: comment.PublishDate,
                 Contents: comment.Contents));
@@ -162,6 +164,7 @@ public class CommentsService : ICommentsService
 
         return new CommentOutput(
             Id: comment.Id,
+            BlogPostId: comment.BlogPost.Id,
             AuthorName: comment.GetAuthorName(),
             PublishDate: comment.PublishDate,
             Contents: comment.Contents);
@@ -185,6 +188,7 @@ public class CommentsService : ICommentsService
             .ToListAsync())
             .Select(x => new CommentOutput(
                 Id: x.Id,
+                BlogPostId: x.BlogPost.Id,
                 AuthorName: x.GetAuthorName(),
                 PublishDate: x.PublishDate,
                 Contents: x.Contents))
