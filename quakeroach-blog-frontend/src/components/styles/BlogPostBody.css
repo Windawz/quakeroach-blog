@@ -1,3 +1,5 @@
 .blog-post-body {
+  font-size: 90%;
   color: var(--readable-text-color-a);
+  white-space: pre-wrap;
 }

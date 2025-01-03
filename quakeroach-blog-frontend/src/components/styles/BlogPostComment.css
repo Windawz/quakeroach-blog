@@ -1,0 +1,40 @@
+.comment-contents {
+  white-space: initial;
+}
+
+/*
+>.author {
+  color: var(--accent-color-a);
+  font-size: 90%;
+  align-self: last baseline;
+}
+
+>.date {
+  color: var(--accent-color-a);
+  font-size: 90%;
+  text-align: end;
+  align-self: last baseline;
+}
+*/
+
+.comment {
+  .author {
+    color: var(--accent-color-a);
+    font-size: 80%;
+
+    .name {
+      color: var(--accent-color-b);
+    }
+  }
+
+  .publish-date {
+    color: var(--accent-color-a);
+    font-size: 70%;
+  }
+
+  .contents {
+    color: var(--readable-text-color-a);
+    white-space: pre-wrap;
+    font-size: 80%;
+  }
+}

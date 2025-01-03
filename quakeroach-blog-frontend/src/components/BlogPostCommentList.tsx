@@ -1,5 +1,6 @@
 import { useComments } from "../lib/backend/queries";
 import { AppError } from "../lib/errorHandling";
+import BlogPostComment from "./BlogPostComment";
 import Container from "./Container";
 
 export interface BlogPostCommentListProps {
@@ -28,9 +29,7 @@ export default function BlogPostCommentList({
 
   if (commentsResult.kind === "success") {
     const comments = commentsResult.data.map(x => (
-      <Container className="comment">
-        {x.contents}
-      </Container>
+      <BlogPostComment authorName={x.authorName} publishDate={x.publishDate} contents={x.contents} />
     ));
 
     if (comments.length === 0) {

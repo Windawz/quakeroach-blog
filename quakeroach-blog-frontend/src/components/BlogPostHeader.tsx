@@ -21,7 +21,7 @@ export default function BlogPostHeader({
         {title}
       </Link>
       <div className="author">
-        by {authorName}
+        by <span className="name">{authorName}</span>
       </div>
       <div className="date">
         published at {publishDate.format()}
