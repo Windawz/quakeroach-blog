@@ -174,6 +174,7 @@ public class CommentsService : ICommentsService
     {
         var comments = _dbContext.Comments
             .Include(x => x.BlogPost)
+            .Include(x => (x as AuthenticatedComment)!.Author)
             .Where(x => x.BlogPost.Id == blogPostId);
 
         if (minPublishDate is not null)
