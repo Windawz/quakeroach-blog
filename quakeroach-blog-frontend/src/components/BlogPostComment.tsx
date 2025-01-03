@@ -1,5 +1,6 @@
 import { Moment } from "moment";
 import Container from "./Container";
+import ContentsDisplay from "./ContentsDisplay";
 import Separator from "./Separator";
 import './styles/BlogPostComment.css';
 
@@ -19,9 +20,7 @@ export default function BlogPostComment(props: BlogPostCommentProps) {
         at {props.publishDate.format()}
       </div>
       <Separator />
-      <div className="contents">
-        {props.contents}
-      </div>
+      <ContentsDisplay className="contents" text={props.contents} />
     </Container>
   );
 }

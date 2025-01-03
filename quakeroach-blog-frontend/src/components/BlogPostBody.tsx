@@ -1,3 +1,4 @@
+import ContentsDisplay from './ContentsDisplay';
 import './styles/BlogPostBody.css';
 
 export interface BlogPostBodyProps {
@@ -6,8 +7,6 @@ export interface BlogPostBodyProps {
 
 export default function BlogPostBody({ content }: BlogPostBodyProps) {
   return (
-    <div className='blog-post-body'>
-      {content}
-    </div>
+    <ContentsDisplay className="blog-post-body" text={content} />
   );
 }
